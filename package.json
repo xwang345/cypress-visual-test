@@ -5,8 +5,35 @@
   "main": "index.js",
   "scripts": {
     "cy:open": "cypress open",
+    "cy:percy": "percy exec -- cypress run",
     "cy:run-tests": "cypress run",
-    "cy:update-snapshots": "cypress run --env updateSnapshots=true"
+    "cy:update-snapshots": "cypress run --env updateSnapshots=true",
+    "cy:run-tests:chrome": "cypress run --browser chrome",
+    "cy:run-tests:firefox": "cypress run --browser firefox",
+    "cy:run-tests:edge": "cypress run --browser edge",
+    "cy:run-tests:electron": "cypress run --browser electron",
+    "cy:run-tests:all": "cypress run --browser all",
+    "cy:run-tests:all:headless": "cypress run --browser all --headless",
+    "cy:run-tests:chrome:headless": "cypress run --browser chrome --headless",
+    "cy:run-tests:firefox:headless": "cypress run --browser firefox --headless",
+    "cy:run-tests:edge:headless": "cypress run --browser edge --headless",
+    "cy:run-tests:electron:headless": "cypress run --browser electron --headless",
+    "cy:run-tests:chrome:record": "cypress run --browser chrome --record",
+    "cy:run-tests:firefox:record": "cypress run --browser firefox --record",
+    "cy:run-tests:edge:record": "cypress run --browser edge --record",
+    "cy:run-tests:electron:record": "cypress run --browser electron --record",
+    "cy:run-tests:all:record": "cypress run --browser all --record",
+    "cy:run-tests:all:headless:record": "cypress run --browser all --headless --record",
+    "cy:run-tests:chrome:headless:record": "cypress run --browser chrome --headless --record",
+    "cy:run-tests:firefox:headless:record": "cypress run --browser firefox --headless --record",
+    "cy:run-tests:edge:headless:record": "cypress run --browser edge --headless --record",
+    "cy:run-tests:electron:headless:record": "cypress run --browser electron --headless --record",
+    "cy:run-tests:chrome:headless:record:ci": "cypress run --browser chrome --headless --record --ci",
+    "cy:run-tests:firefox:headless:record:ci": "cypress run --browser firefox --headless --record --ci",
+    "cy:run-tests:edge:headless:record:ci": "cypress run --browser edge --headless --record --ci",
+    "cy:run-tests:electron:headless:record:ci": "cypress run --browser electron --headless --record --ci",
+    "cy:run-tests:all:headless:record:ci": "cypress run --browser all --headless --record --ci",
+    "cy:run-dashboard": "cypress run --record --key 3ec48c5a-4ed9-4533-86f9-030b49e7fac3"
   },
   "repository": {
     "type": "git",
@@ -33,6 +60,8 @@
   },
   "devDependencies": {
     "@emerson-eps/cypress-image-snapshot": "^1.5.2",
+    "@percy/cli": "^1.27.5",
+    "@percy/cypress": "^3.1.2",
     "@simonsmith/cypress-image-snapshot": "^9.0.1"
   }
 }

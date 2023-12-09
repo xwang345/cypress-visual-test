@@ -36,16 +36,37 @@
 //   }
 // }
 
+/*
 declare namespace Cypress {
     interface Chainable {
-        setResolution(size: number[]): Chainable<Element>;
+        setResolution(size: string | [number, number]): void;
     }
 }
 
-Cypress.Commands.add('setResolution', (size) => {
+Cypress.Commands.add("setResolution", (size: string | [number, number]) => {
     if (Cypress._.isArray(size)) {
         cy.viewport(size[0], size[1]);
     } else {
         cy.viewport(size);
+    }
+});
+*/
+
+declare namespace Cypress {
+    interface Chainable {
+        setResolution(size: string | [number, number]): void;
+    }
+}
+
+Cypress.Commands.add("setResolution", (size: Cypress.ViewportPreset | [number, number]) => {
+    if (Array.isArray(size)) {
+        if (size.length !== 2 || typeof size[0] !== 'number' || typeof size[1] !== 'number') {
+            throw new Error('When size is an array, it must be a two-element array of numbers');
+        }
+        cy.viewport(size[0], size[1]);
+    } else if (typeof size === 'string') {
+        cy.viewport(size);
+    } else {
+        throw new Error('Size must be either a string or a two-element array of numbers');
     }
 });

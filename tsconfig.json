@@ -5,5 +5,5 @@
       "types": ["cypress", "node"],
       "allowJs":true
     },
-    "include": ["**/*.ts", "@simonsmith/cypress-image-snapshot/types"]
+    "include": ["**/*.ts", "@simonsmith/cypress-image-snapshot/types", "cypress", "@percy/cypress"]
   }
