@@ -1,0 +1,38 @@
+{
+  "name": "cypress-visual-test",
+  "version": "1.0.0",
+  "description": "visual regression testing using Cypress",
+  "main": "index.js",
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run-tests": "cypress run",
+    "cy:update-snapshots": "cypress run --env updateSnapshots=true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xwang345/cypress-visual-test.git"
+  },
+  "keywords": [
+    "cypress",
+    "visual",
+    "testing",
+    "snapshots"
+  ],
+  "author": "Xiaochen Wang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xwang345/cypress-visual-test/issues"
+  },
+  "homepage": "https://github.com/xwang345/cypress-visual-test#readme",
+  "dependencies": {
+    "@types/cypress-image-snapshot": "^3.1.9",
+    "cypress": "^13.6.1",
+    "cypress-img-snapshot": "^1.0.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@emerson-eps/cypress-image-snapshot": "^1.5.2",
+    "@simonsmith/cypress-image-snapshot": "^9.0.1"
+  }
+}
