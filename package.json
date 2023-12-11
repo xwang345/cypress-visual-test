@@ -6,7 +6,7 @@
   "scripts": {
     "cy:open": "cypress open",
     "cy:percy": "percy exec -- cypress run",
-    "cy:run-tests": "cypress run",
+    "cy:run": "cypress run",
     "cy:update-snapshots": "cypress run --env updateSnapshots=true",
     "cy:run-tests:chrome": "cypress run --browser chrome",
     "cy:run-tests:firefox": "cypress run --browser firefox",
@@ -55,6 +55,7 @@
     "@types/cypress-image-snapshot": "^3.1.9",
     "cypress": "^13.6.1",
     "cypress-img-snapshot": "^1.0.0",
+    "postinstall": "^0.8.0",
     "prettier": "^3.1.0",
     "typescript": "^5.3.3"
   },

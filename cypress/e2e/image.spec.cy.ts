@@ -21,9 +21,20 @@ describe('Single Element Snapshot', () => {
         cy.visit('https://example.com');
         cy.get('h1').matchImageSnapshot(
             {
-                failureThreshold: 10.0,
-                failureThresholdType: 'pixel'
+                failureThreshold: 0.03,
+                failureThresholdType: 'percent',
+                capture: 'viewport'
             },
         );
+    });
+});
+
+describe('Cypress Tests with Docker', () => {
+    it('should load website', () => {
+        cy.visit('https://example.com');
+    });
+
+    it('should load h1 element', () => {
+        cy.get('h1').should('be.visible');
     });
 });
