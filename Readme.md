@@ -26,5 +26,7 @@ Open index.html file in FireFox to show the report.
 Note : If the report is in loading state, please try to open in different browsers
 
  npx cypress run --env allure=true
+
  allure generate allure-results --clean -o allure-report
+ 
  allure open

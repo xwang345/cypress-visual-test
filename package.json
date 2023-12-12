@@ -39,7 +39,8 @@
     "allure:clear_report": "  (if exist allure-report (rmdir  /S /Q allure-report))",
     "precy-run": "yarn run allure:clear_results && yarn run allure:clear_report",
     "cy-run": "cypress run --env allure=true",
-    "postcy-run": "yarn run allure:report"
+    "postcy-run": "yarn run allure:report",
+    "allure-report": "allure generate allure-results && allure open"
   },
   "repository": {
     "type": "git",
