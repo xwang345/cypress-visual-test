@@ -2,8 +2,8 @@ describe('Visual Regression -Login Page', () => {
     beforeEach(() => {
         cy.visit('http://zero.webappsecurity.com/index.html');
         cy.get('#signin_button').click();
-        cy.get('#user_login').type('username');
-        cy.get('#user_password').type('password');
+        cy.get('#user_login').type('username1');
+        cy.get('#user_password').type('password1');
         cy.get('#user_remember_me').click();
     });
 
