@@ -14,3 +14,17 @@ To run this command, open a command prompt, navigate to the directory containing
 ducker run -it --entrypoint=cypress info
 
 docker exec -it cypress-container npm run cy:run
+
+
+As you said, it is generating test result data and screenshot in that folder. You can generate report after this. Follow below steps.
+
+Add this dependency by running npm install allure-commandline --save-dev
+Run your tests and generate test result data (ie, after running it will generate allure-results folder).
+From the same project directory run, `allure generate allure-results --clean -o allure-report` in the command prompt
+On successfull execution it will generate one more folder allure-reportin your directory.
+Open index.html file in FireFox to show the report.
+Note : If the report is in loading state, please try to open in different browsers
+
+ npx cypress run --env allure=true
+ allure generate allure-results --clean -o allure-report
+ allure open

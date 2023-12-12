@@ -33,7 +33,13 @@
     "cy:run-tests:edge:headless:record:ci": "cypress run --browser edge --headless --record --ci",
     "cy:run-tests:electron:headless:record:ci": "cypress run --browser electron --headless --record --ci",
     "cy:run-tests:all:headless:record:ci": "cypress run --browser all --headless --record --ci",
-    "cy:run-dashboard": "cypress run --record --key 3ec48c5a-4ed9-4533-86f9-030b49e7fac3"
+    "cy:run-dashboard": "cypress run --record --key 3ec48c5a-4ed9-4533-86f9-030b49e7fac3",
+    "allure:report": "allure generate allure-results --clean -o allure-report",
+    "allure:clear_results": "(if exist allure-results (rmdir /S /Q allure-results))",
+    "allure:clear_report": "  (if exist allure-report (rmdir  /S /Q allure-report))",
+    "precy-run": "yarn run allure:clear_results && yarn run allure:clear_report",
+    "cy-run": "cypress run --env allure=true",
+    "postcy-run": "yarn run allure:report"
   },
   "repository": {
     "type": "git",
@@ -53,16 +59,17 @@
   "homepage": "https://github.com/xwang345/cypress-visual-test#readme",
   "dependencies": {
     "@types/cypress-image-snapshot": "^3.1.9",
-    "cypress": "^13.6.1",
+    "cypress": "^11.0.0",
     "cypress-img-snapshot": "^1.0.0",
     "postinstall": "^0.8.0",
     "prettier": "^3.1.0",
     "typescript": "^5.3.3"
   },
   "devDependencies": {
-    "@emerson-eps/cypress-image-snapshot": "^1.5.2",
     "@percy/cli": "^1.27.5",
     "@percy/cypress": "^3.1.2",
-    "@simonsmith/cypress-image-snapshot": "^9.0.1"
+    "@shelex/cypress-allure-plugin": "^2.40.0",
+    "@simonsmith/cypress-image-snapshot": "^9.0.1",
+    "allure-commandline": "^2.24.1"
   }
 }

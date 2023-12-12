@@ -2,3 +2,5 @@ node_modules
 videos
 screenshots
 snapshots
+allure-report
+allure-results
