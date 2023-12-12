@@ -1,7 +1,7 @@
 name: Cypress tests
 on:
   push:
-    branches: master
+    branches: [master]
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -14,3 +14,24 @@ jobs:
         run: npm ci
       - name: Cypress tests
         run: npx cypress run
+      - name: Get Allure history
+        uses: actions/checkout@v2
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+      - name: Allure Report action from marketplace
+        uses: simple-elf/allure-report-action@master
+        id: allure-report
+        with:
+          allure_results: allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+
+      - name: Deploy report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: allure-history
