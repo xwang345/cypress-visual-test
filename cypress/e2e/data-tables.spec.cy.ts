@@ -15,4 +15,12 @@ describe('Visual Regression', () => {
     it('Data table snapshot', () => {
         cy.matchImageSnapshot();
     });
+
+    it('should verify the content of the pdf file', () => {
+        cy.get('#download_transactions').click();
+        cy.wait(3000);
+        cy.task('readPdf', 'cypress/downloads/transaction.pdf').then((pdfData) => {
+            expect(pdfData.text).to.contain('Date Description Amount');
+        });
+    })
 })
