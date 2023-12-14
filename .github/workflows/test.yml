@@ -17,8 +17,7 @@ jobs:
         run: npm ci
 
       - name: Run Cypress tests
-        run: npx cypress run
-
+        run: npx cypress run --browser chrome --headless --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
       - name: Get Allure history
         uses: actions/checkout@v2
         continue-on-error: true
