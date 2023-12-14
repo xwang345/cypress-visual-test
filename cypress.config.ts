@@ -1,6 +1,9 @@
 import { defineConfig } from "cypress";
 import {addMatchImageSnapshotPlugin} from '@simonsmith/cypress-image-snapshot/plugin'
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
+import { readPdfFunc } from './cypress/scripts/readPdf';
+const { removeDirectory } = require('cypress-delete-downloads-folder');
+
 
 export default defineConfig({
   projectId: "37z5fo",
@@ -8,11 +11,19 @@ export default defineConfig({
     video: true,
     setupNodeEvents(on, config) {
       // implement node event listeners here
+      on('task', {
+        readPdfFunc,
+      }),
+      on('task',{
+         removeDirectory 
+      }),
       addMatchImageSnapshotPlugin(on)
       allureWriter(on, config);
       return config;
     },
-    // testIsolation: false,
+    downloadsFolder: 'cypress/downloads',
+    trashAssetsBeforeRuns: true,
+    testIsolation: false,
     defaultCommandTimeout: 10000,
     pageLoadTimeout: 10000,
     waitForAnimations: true,
@@ -23,3 +34,24 @@ export default defineConfig({
     }
   },
 });
+
+// write a jsDoc comments for the function
+// /**
+//  * 
+//  * @param pathToPdf 
+//  * @returns 
+//  */
+// // const readPdfFunc = (pathToPdf: string): Promise<string> => {
+// function readPdfFunc(pathToPdf: string) {
+//   return new Promise((resolve) => {
+//     if (typeof pathToPdf !== 'string') {
+//       throw new Error('pathToPdf must be a string')
+//     }
+
+//     const pdfPath = path.resolve(pathToPdf)
+//     let dataBuffer = fs.readFileSync(pdfPath);
+//     pdf(dataBuffer).then(({ text }) => {
+//       resolve(text)
+//     });
+//   });
+// }

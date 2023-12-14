@@ -2,8 +2,9 @@
     "compilerOptions": {
       "target": "es5",
       "lib": ["es5", "dom"],
-      "types": ["cypress", "node", "@shelex/cypress-allure-plugin"],
-      "allowJs":true
+      "types": ["cypress-plugin-steps", "cypress", "node", "@shelex/cypress-allure-plugin"],
+      "allowJs":false,
+      "noImplicitAny": false
     },
     "include": ["**/*.ts", "@simonsmith/cypress-image-snapshot/types", "cypress", "@percy/cypress"]
   }

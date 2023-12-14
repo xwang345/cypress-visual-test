@@ -1,14 +1,18 @@
+import NavBar from "../page-objects/components/navBar.components";
+import OnlineStatementsPage from "../page-objects/pages/onlineStatements.page";
+
 describe('Visual Regression', () => {
     before(() => {
         cy.visit('http://zero.webappsecurity.com/index.html');
         cy.get('#signin_button').click();
-        cy.get('#user_login').type('username');
-        cy.get('#user_password').type('password');
+        cy.get('#user_login').click().type('username');
+        cy.get('#user_password').click().type('password');
         cy.get('#user_remember_me').click();
         cy.get('input[name="submit"]').click();
     });
 
     it('Should load account activity', () => {
+        cy.step('click on account activity tab');
         cy.get('#account_activity_tab').click();
     });
 
@@ -17,10 +21,25 @@ describe('Visual Regression', () => {
     });
 
     it('should verify the content of the pdf file', () => {
-        cy.get('#download_transactions').click();
-        cy.wait(3000);
-        cy.task('readPdf', 'cypress/downloads/transaction.pdf').then((pdfData) => {
-            expect(pdfData.text).to.contain('Date Description Amount');
+        // cy.get('#user_login').type('username');
+        // cy.get('#user_password').type('password');
+        // cy.get('#user_remember_me').click();
+        // cy.get('input[name="submit"]').click({force: true});
+        
+        NavBar.clickOnLineStatementsTab();
+
+        cy.step('Select statement year and account');
+        OnlineStatementsPage.selectAccount('Loan');
+        OnlineStatementsPage.selectStatementYear(2012);
+
+        cy.step('Download statement');
+        OnlineStatementsPage.downloadStatement('Statement 01/10/12(57K)');
+
+        cy.task('readPdfFunc', 'cypress/downloads/8534567-01-10-12.pdf').then(pdfContent => {
+            //verify the content of the pdf file
+            expect(pdfContent).to.contain('Customer ID:');
+            expect(pdfContent).to.contain('Statements');
+            expect(pdfContent).to.contain('Company Name');
         });
     })
 })

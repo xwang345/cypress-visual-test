@@ -17,7 +17,9 @@
 import './commands'
 import {addMatchImageSnapshotCommand} from '@simonsmith/cypress-image-snapshot/command'
 import '@percy/cypress'
-import '@shelex/cypress-allure-plugin';
+const fs = require('fs')
+const path = require('path')
+require('cypress-plugin-steps')
 
 addMatchImageSnapshotCommand()
 
