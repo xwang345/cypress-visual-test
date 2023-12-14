@@ -19,6 +19,7 @@ import {addMatchImageSnapshotCommand} from '@simonsmith/cypress-image-snapshot/c
 import '@percy/cypress'
 const fs = require('fs')
 const path = require('path')
+import '@shelex/cypress-allure-plugin';
 require('cypress-plugin-steps')
 
 addMatchImageSnapshotCommand()

@@ -25,7 +25,7 @@ On successfull execution it will generate one more folder allure-reportin your d
 Open index.html file in FireFox to show the report.
 Note : If the report is in loading state, please try to open in different browsers
 
- npx cypress run --env allure=true
+npx cypress run --browser chrome --headless --env allure=true
 
  allure generate allure-results --clean -o allure-report
  
