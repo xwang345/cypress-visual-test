@@ -21,11 +21,6 @@ describe('Visual Regression', () => {
     });
 
     it('should verify the content of the pdf file', () => {
-        // cy.get('#user_login').type('username');
-        // cy.get('#user_password').type('password');
-        // cy.get('#user_remember_me').click();
-        // cy.get('input[name="submit"]').click({force: true});
-        
         NavBar.clickOnLineStatementsTab();
 
         cy.step('Select statement year and account');

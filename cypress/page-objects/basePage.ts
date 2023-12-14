@@ -1,25 +1,25 @@
 export default class BasePage {
-    pause(ms: number): void {
+    static pause(ms: number): void {
         cy.wait(ms)
     }
 
-    logInfo(message: string): void {
+    static logInfo(message: string): void {
         cy.log(message)
     }
 
-    setMobileViewport(): void {
+    static setMobileViewport(): void {
         cy.viewport('iphone-x')
     }
 
-    setTabletViewport(): void {
+    static setTabletViewport(): void {
         cy.viewport('ipad-2');
     }
 
-    setDesktopViewport(): void {
+    static setDesktopViewport(): void {
         cy.viewport('macbook-13');
     }
 
-    setLargeDesktopViewport(): void {
+    static setLargeDesktopViewport(): void {
         cy.viewport(1980, 1080);
     }
 }
