@@ -1,5 +1,7 @@
 name: Cypress tests
 on:
+  schedule:
+    - cron: '40 10,13 * * *'
   push:
     branches: [master]
 jobs:
