@@ -2,7 +2,14 @@
     "compilerOptions": {
       "target": "es5",
       "lib": ["es5", "dom"],
-      "types": ["cypress-plugin-steps", "cypress", "node", "@shelex/cypress-allure-plugin"],
+      "types": [
+        "cypress-plugin-steps", 
+        "cypress", 
+        "node", 
+        "@shelex/cypress-allure-plugin", 
+        "@4tw/cypress-drag-drop", 
+        "cypress-real-events"
+      ],
       "allowJs":false,
       "noImplicitAny": false
     },

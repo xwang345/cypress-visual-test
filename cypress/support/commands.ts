@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 require('cypress-delete-downloads-folder').addCustomCommand();
+require('@4tw/cypress-drag-drop')
+require('./../scripts/drag-drop.command');
 
 // ***********************************************
 // This example commands.ts shows you how to
@@ -14,6 +16,7 @@ require('cypress-delete-downloads-folder').addCustomCommand();
 declare namespace Cypress {
     interface Chainable {
         setResolution(size: string | [number, number]): void;
+        dragTo(subject?: any, to?: any, opts?: any): Chainable<Element>;
     }
 }
 
