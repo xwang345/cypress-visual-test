@@ -22,8 +22,6 @@ const dragTo = (subject, to, opts) => {
 
   const win = subject[0].ownerDocument.defaultView
 
-  console.log('win ====================>: ', win)
-
   const elFromCoords = (coords) => win.document.elementFromPoint(coords.x, coords.y)
   const winMouseEvent = win.MouseEvent
 
