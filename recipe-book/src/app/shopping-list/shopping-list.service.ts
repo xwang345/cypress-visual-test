@@ -30,4 +30,28 @@ export class ShoppingListService {
     this.ingredients.push(...ingredients);
     this.ingredientsChanged.next(this.ingredients.slice());
   }
+
+  updateIngredient(index: number, newIngredient: Ingredient){
+    this.ingredients[index] = newIngredient;
+    this.ingredientsChanged.next(this.ingredients.slice());
+  }
+
+  checkIngredientByName(name: string): boolean {
+    return this.ingredients.find(x => x.name === name) ? true : false;  
+  }
+
+  updateExisitingIngredientByName(name: string, amount: number){
+    console.log('new amount: ' + amount + ' for ' + name + ' ingredient')
+    this.ingredients.find(x => x.name === name).amount = amount;
+    this.ingredientsChanged.next(this.ingredients.slice());
+  }
+
+  getIngredientIndexByName(name: string): number {
+    return this.ingredients.findIndex(x => x.name === name);
+  }
+
+  deleteIngredient(index: number){
+    this.ingredients.splice(index, 1); // remove 1 element at index
+    this.ingredientsChanged.next(this.ingredients.slice()); // emit the new array
+  }
 }
