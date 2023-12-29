@@ -5,7 +5,7 @@ import { DataStorageService } from '../shared/data-storage.service';
 import { RecipeService } from './recipe.service';
 
 @Injectable({ providedIn: 'root' })
-export class RecipesSovlerService implements Resolve<Recipe[]> {
+export class RecipesSovlerService {
     constructor(private dataStorageService: DataStorageService, private recipeService: RecipeService) { } // inject dataStorageService and recipesService
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
