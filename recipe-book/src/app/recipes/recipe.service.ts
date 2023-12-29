@@ -8,23 +8,30 @@ import { Subject } from 'rxjs';
 export class RecipeService{
   recipesChanged = new Subject<Recipe[]>();
 
-  private recipes: Recipe[] = [
-    new Recipe('A Test Recipe', 
-    'This is simply a test', 'https://www.eatingwell.com/thmb/YxkWBfh2AvNYrDKoHukRdmRvD5U=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg',
-    [ 
-      new Ingredient('Meat', 1), 
-      new Ingredient('French Fries', 20) 
-    ]),
-    new Recipe('A Test Recipe', 
-    'This is another simply a test', 
-    'https://imageio.forbes.com/specials-images/imageserve/65072bc1a50c29d7592250c0/Healthy-food--Healthy-eating-background--Fruit--vegetable--berry---Vegetarian-eating-/960x0.jpg',
-    [
-      new Ingredient('Buns', 2),
-      new Ingredient('Meat', 1)
-    ])
-  ];
+  // private recipes: Recipe[] = [
+  //   new Recipe('A Test Recipe', 
+  //   'This is simply a test', 'https://www.eatingwell.com/thmb/YxkWBfh2AvNYrDKoHukRdmRvD5U=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg',
+  //   [ 
+  //     new Ingredient('Meat', 1), 
+  //     new Ingredient('French Fries', 20) 
+  //   ]),
+  //   new Recipe('A Test Recipe', 
+  //   'This is another simply a test', 
+  //   'https://imageio.forbes.com/specials-images/imageserve/65072bc1a50c29d7592250c0/Healthy-food--Healthy-eating-background--Fruit--vegetable--berry---Vegetarian-eating-/960x0.jpg',
+  //   [
+  //     new Ingredient('Buns', 2),
+  //     new Ingredient('Meat', 1)
+  //   ])
+  // ];
+
+  private recipes: Recipe[] = [];
 
   constructor(private slService: ShoppingListService) {}
+
+  setRecipes(recipes: Recipe[]){ // set recipes
+    this.recipes = recipes;
+    this.recipesChanged.next(this.recipes.slice());
+  }
 
   getRecipes() {
     return this.recipes.slice();
