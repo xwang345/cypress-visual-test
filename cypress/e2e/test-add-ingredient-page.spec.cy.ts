@@ -36,7 +36,7 @@ describe('shopping list page verification', () => {
         cy.wait(300)
         cy.get('button:contains("New Recipe")').click();
         cy.get('#name').type('test');
-        cy.get('#imagePath').type('https://cdn.shopify.com/s/files/1/0271/5870/8303/files/jaycee-xie-aH9Uskj8XTU-unsplash.jpg?v=1680123078');
+        cy.get('#imagePath').type('src="https://www.recipetineats.com/wp-content/uploads/2019/04/Beef-Pho_4.jpg"');
         cy.get('#description').type("Lorem Ipsum is simply dummy text of the printing and typesetting industry.");
         cy.get('button:contains("Add Ingredient")').click();
         
@@ -48,5 +48,43 @@ describe('shopping list page verification', () => {
 
         cy.get('.list-group-item').last().should('contain', 'test');
         cy.get('.list-group-item').last().click();
+    });
+
+    it.only('should able to login to the recipe book', () => {
+        cy.viewport('macbook-16');
+        cy.visit('localhost:4200/auth')
+        cy.wait(300)
+        cy.get('#email').type('test@test.com');
+        cy.get('#password').type('test123');
+        cy.get('button:contains("Login")').click();
+
+         cy.get('button:contains("New Recipe")').click();
+        cy.get('#name').type('Pho');
+        cy.get('#imagePath').type('https://www.recipetineats.com/wp-content/uploads/2019/04/Beef-Pho_4.jpg');
+        cy.get('#description').type("Experience the magic of one of the greatest noodle soups in the world with this easy to follow traditional Vietnamese Pho recipe!");
+        cy.get('button:contains("Add Ingredient")').click();
+        
+
+        cy.get('[formarrayname="ingredients"]').find('[formcontrolname="name"]').type('large onions');
+        cy.get('[formarrayname="ingredients"]').find('[formcontrolname="amount"]').type('2');
+
+        cy.get('button:contains("Add Ingredient")').click();
+
+        cy.get('[formarrayname="ingredients"]').find('[formcontrolname="name"]').last().type('star anise');
+        cy.get('[formarrayname="ingredients"]').last().find('[formcontrolname="amount"]').last().type('8');
+
+        cy.get('button:contains("Add Ingredient")').click();
+
+        cy.get('[formarrayname="ingredients"]').find('[formcontrolname="name"]').last().type('beef brisket');
+        cy.get('[formarrayname="ingredients"]').find('[formcontrolname="amount"]').last().type('3');
+
+
+        cy.get('button:contains("Save")').click();
+
+        cy.get('.list-group-item').last().should('contain', 'Pho');
+        cy.get('.list-group-item').last().click();
+
+        cy.get('.dropdown').click();
+        cy.get('a:contains("Save Data")').click();
     });
 });
