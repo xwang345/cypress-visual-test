@@ -41,8 +41,11 @@
         <button 
         class="btn btn-primary" 
         (click)="onSwitchMode()" 
-        type="button">Switch to {{ isLoginMode ? 'Sign Up' : 'Login' }}</button>
+        type="button"
+        mat-raised-button
+        color="primary">Switch to {{ isLoginMode ? 'Sign Up' : 'Login' }}</button>
       </div>
+      <button mat-raised-button [disabled]="true">test</button>
     </form>
   </div>
 </div>

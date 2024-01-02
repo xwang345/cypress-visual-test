@@ -11,6 +11,7 @@ import { RecipesModule } from './recipes/recipes.module';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
 import { AuthModule } from './auth/auth.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { AuthModule } from './auth/auth.module';
     RecipesModule,
     SharedModule,
     CoreModule,
-    AuthModule
+    AuthModule,
+    BrowserAnimationsModule
   ],
   bootstrap: [AppComponent]
 })
