@@ -6,6 +6,8 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { AuthComponent } from './auth.component';
 import { MatButtonModule } from '@angular/material/button';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
 
 
 @NgModule({
@@ -15,7 +17,9 @@ import { MatButtonModule } from '@angular/material/button';
     FormsModule,
     RouterModule.forChild([{ path: 'auth', component: AuthComponent }]),
     SharedModule,
-    MatButtonModule
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule
   ]
 })
 export class AuthModule {

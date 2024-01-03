@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default">
+<!-- <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
       <a href="#" class="navbar-brand">Recipe Book</a>
@@ -26,3 +26,65 @@
       </ul>
     </div>
   </div>
+</nav> -->
+
+
+<p>
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <span>Recipe Book</span>
+      <div>
+        <div class="navbar-left-items">
+          <!-- <div> -->
+            <button mat-button routerLinkActive="active" routerLink="/recipes" *ngIf="isAuthenticated">Recipes</button>
+          <!-- </div> -->
+          <!-- <div> -->
+            <button mat-button routerLinkActive="active" routerLink="/auth" *ngIf="!isAuthenticated">Authticate</button>
+          <!-- </div> -->
+          <!-- <div> -->
+            <button mat-button routerLinkActive="active" routerLink="/shopping-list">Shopping List</button>
+          <!-- </div> -->
+        </div>
+      </div>
+      <div class="navbar-right-items">
+        <!-- <ul class="nav navbar-nav">
+          <li>
+            <a style="cursor: pointer;" *ngIf="isAuthenticated" (click)="onLogout()">
+              Logout
+            </a>
+          </li>
+          <li class="dropdown" appDropdown *ngIf="isAuthenticated">
+            <a style="cursor: pointer;" class="dropdown-toggle"
+               data-toggle="dropdown">Manage <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a style="cursor: pointer;" (click)="onSaveData()">Save Data</a></li>
+              <li><a style="cursor: pointer;" (click)="onFetchData()">Fetch Data</a></li>
+            </ul>
+          </li>
+        </ul> -->
+        <button 
+        mat-icon-button 
+        [matMenuTriggerFor]="menu" 
+        aria-label="Example icon-button with a menu" 
+        appDropdown 
+        *ngIf="isAuthenticated">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item>
+            <mat-icon>save</mat-icon>
+            <span (click)="onSaveData()">Save Data</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>cloud_download</mat-icon>
+            <span (click)="onFetchData()">Fetch Data</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>time_to_leave</mat-icon>
+            <span *ngIf="isAuthenticated" (click)="onLogout()">Logout</span>
+          </button>
+        </mat-menu>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</p>

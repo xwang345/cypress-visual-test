@@ -16,7 +16,8 @@ const routes: Routes = [
       { 
         path: '', 
         component: RecipeStartComponent, 
-        resolve: [RecipesResovlerService]  
+        resolve: [RecipesResovlerService],
+        pathMatch: 'full'
       },
       { path: 'new', component: RecipeEditComponent },
       { 

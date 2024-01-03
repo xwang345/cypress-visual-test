@@ -12,18 +12,21 @@
     </div>
     <form #authForm="ngForm" (ngSubmit)="onSubmit(authForm)" *ngIf="!isLoading">
       <div class="form-group">
-        <label for="email">Email</label>
-        <input 
+        <mat-form-field class="example-full-width">
+          <mat-label>Email</mat-label>
+          <input
+          matInput 
           type="email" 
           id="email" 
-          class="form-control" 
           ngModel 
           name="email"
           required
-          email>
+          email
+          placeholder="Ex. pat@example.com">
+        </mat-form-field>
       </div>
       <div class="form-group">
-        <label for="password">Password</label>
+        <!-- <label for="password">Password</label>
         <input 
           type="password" 
           id="password" 
@@ -31,7 +34,19 @@
           ngModel
           name="password"
           required
-          minlength="6">
+          minlength="6"> -->
+        <mat-form-field class="example-full-width">
+          <mat-label>Password</mat-label>
+          <input
+          matInput
+          type="password" 
+          id="password" 
+          ngModel 
+          name="password"
+          required
+          minlength="6"
+          placeholder="Ex. 123456">
+        </mat-form-field>
       </div>
       <div>
         <button 
@@ -45,7 +60,6 @@
         mat-raised-button
         color="primary">Switch to {{ isLoginMode ? 'Sign Up' : 'Login' }}</button>
       </div>
-      <button mat-raised-button [disabled]="true">test</button>
     </form>
   </div>
 </div>

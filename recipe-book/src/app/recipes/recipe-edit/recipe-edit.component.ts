@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { RecipeService } from '../recipe.service';
-
 @Component({
   selector: 'app-recipe-edit',
   templateUrl: './recipe-edit.component.html',
@@ -12,6 +11,7 @@ export class RecipeEditComponent implements OnInit{
   id: number;
   editMode = false;
   recipeForm: FormGroup
+  value: string = '';
 
   constructor(private route: ActivatedRoute, 
               private recipeService: RecipeService,
@@ -97,5 +97,9 @@ export class RecipeEditComponent implements OnInit{
       'description': new FormControl(recipeDescription, Validators.required),
       'ingredients': recipeIngredients
     });
+  }
+
+  emptyInputField() {
+    this.value = '';
   }
 }

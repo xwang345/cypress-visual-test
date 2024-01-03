@@ -1,4 +1,15 @@
 input.ng-invalid.ng-touched,
 textarea.ng-invalid.ng-touched {
-  border: 2px solid rgb(201, 55, 86);
+  /* border: 2px solid rgb(201, 55, 86); */
+  size: 10px;
+}
+
+.example-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.example-full-width {
+  width: 100%;
 }

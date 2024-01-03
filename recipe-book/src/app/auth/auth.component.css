@@ -1,4 +1,8 @@
-ng-reflect-disabled {
+ng-reflect-disabled disabled{
   color: black;
   border-color: grey;
+}
+
+.example-full-width {
+  width: 100%;
 }
