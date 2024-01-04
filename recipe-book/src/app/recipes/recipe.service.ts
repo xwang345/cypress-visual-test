@@ -55,6 +55,17 @@ export class RecipeService{
     this.recipesChanged.next(this.recipes.slice());
   } 
 
+  reorderRecipe(currentIndex: number, newIndex: number) {
+    if (newIndex >= this.recipes.length) {
+      let k = newIndex - this.recipes.length + 1;
+      while (k--) {
+        this.recipes.push(undefined);
+      }
+    }
+    this.recipes.splice(newIndex, 0, this.recipes.splice(currentIndex, 1)[0]);
+    this.recipesChanged.next(this.recipes.slice());
+  }
+
   deleteRecipe(index: number){
     this.recipes.splice(index, 1); // remove 1 element at index
     this.recipesChanged.next(this.recipes.slice());

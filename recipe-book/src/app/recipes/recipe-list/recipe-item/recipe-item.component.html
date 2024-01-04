@@ -1,18 +1,24 @@
-<a 
+<div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+  <div 
+  class="example-box" 
+  cdkDrag
+  *ngFor="let recipeEl of recipeArray; let idx = index"
+  [index]="idx"
   style="cursor: pointer;"
-  [routerLink]="[index]"
+  [routerLink]="[idx]"
   routerLinkActive="active"
-  class="list-group-item clearfix"
-  >
-  <div class="pull-left">
-    <h4 class="list-group-item-heading">{{ recipe.name }}</h4>
-    <p class="list-group-item-text">{{ recipe.description }}</p>
-    </div>
-      <span class="pull-right">
-        <img 
-        [src]="recipe.imagePath"
-        alt="{{ recipe.name }}" 
-        class="img-responsive" 
-        style="max-height: 50px;">
-      </span>
-</a>
+  class="list-group-item clearfix">
+  <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+  <h4 class="list-group-item-heading">{{ recipeEl.name }}</h4>
+  <span>
+    <p>{{ recipeEl.description }}</p>
+  </span>
+  <span class="pull-right">
+    <img 
+    [src]="recipeEl.imagePath"
+    alt="{{ recipeEl.name }}" 
+    class="img-responsive" 
+    style="max-height: 50px;">
+  </span>
+  </div>
+</div>

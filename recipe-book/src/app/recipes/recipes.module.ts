@@ -17,6 +17,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { HttpClientModule } from '@angular/common/http';
 
+import {CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray} from '@angular/cdk/drag-drop';
+
+
 @NgModule({
   declarations: [
     RecipesComponent,
@@ -39,7 +42,10 @@ import { HttpClientModule } from '@angular/common/http';
     MatInputModule, 
     FormsModule, 
     MatButtonModule, 
-    MatIconModule
+    MatIconModule,
+    
+    CdkDropList,
+    CdkDrag
   ]
 })
 export class RecipesModule {
