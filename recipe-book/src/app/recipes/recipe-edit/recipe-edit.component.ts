@@ -2,6 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { RecipeService } from '../recipe.service';
+
+interface DietaryPreferences {
+  value: string;
+  viewValue: string;
+}
+
 @Component({
   selector: 'app-recipe-edit',
   templateUrl: './recipe-edit.component.html',
@@ -12,6 +18,12 @@ export class RecipeEditComponent implements OnInit{
   editMode = false;
   recipeForm: FormGroup
   value: string = '';
+  preferences: DietaryPreferences[] = [
+    {value: 'all-0', viewValue: 'All'},
+    {value: 'vegetarian-1', viewValue: 'Vegetarian'},
+    {value: 'gluten-free-2', viewValue: 'Gluten Free'},
+    {value: 'Dairy-free-3', viewValue: 'Dairy Free'}
+  ];
 
   constructor(private route: ActivatedRoute, 
               private recipeService: RecipeService,
@@ -68,12 +80,14 @@ export class RecipeEditComponent implements OnInit{
     let recipeName = '';
     let recipeImagePath = '';
     let recipeDescription = '';
+    let recipeDietaryPreference = '';
     let recipeIngredients = new FormArray([]); // initialize an empty array
 
     if(this.editMode) {
       const recipe = this.recipeService.getRecipe(this.id);
       recipeName = recipe.name;
       recipeImagePath = recipe.imagePath;
+      recipeDietaryPreference = recipe.dietaryPreference;
       recipeDescription = recipe.description;
 
       // if recipe has ingredients
@@ -95,6 +109,7 @@ export class RecipeEditComponent implements OnInit{
       'name': new FormControl(recipeName, Validators.required),
       'imagePath': new FormControl(recipeImagePath, Validators.required),
       'description': new FormControl(recipeDescription, Validators.required),
+      'dietaryPreference': new FormControl(recipeDietaryPreference, Validators.required),
       'ingredients': recipeIngredients
     });
   }

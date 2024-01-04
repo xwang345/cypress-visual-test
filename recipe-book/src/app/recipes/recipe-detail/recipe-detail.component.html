@@ -14,18 +14,37 @@
 </div>
 <div class="row">
   <div class="col-xs-12">
-    <div class="btn-group"
-    appDropdown>
-      <button class="btn btn-primary dropdown-toggle">
+    <div class="btn-group">
+      <button 
+      class="btn btn-primary dropdown-toggle large-icon-button"
+      [matMenuTriggerFor]="menu"
+      appDropdown
+      mat-raised-button
+      aria-label="Example icon-button with a menu"
+      color="primary">
         Manage Recipe <span class="caret"></span>
       </button>
-      <ul class="dropdown-menu">
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="onAddToShoppingList()">
+          <mat-icon>add_shopping_cart</mat-icon>
+          <span>To Shopping List</span>
+        </button>
+        <button mat-menu-item (click)="onEditRecipe()">
+          <mat-icon>edit</mat-icon>
+          <span>Edit Recipe</span>
+        </button>
+        <button mat-menu-item (click)="onDeleteRecipe()">
+          <mat-icon>delete</mat-icon>
+          <span>Delete Recipe</span>
+        </button>
+      </mat-menu>
+      <!-- <ul class="dropdown-menu">
         <li><a (click)="onAddToShoppingList()" style="cursor: pointer;">
           To Shopping List</a></li>
         <li><a style="cursor: pointer;" (click)="onEditRecipe()">
           Edit Recipe</a></li>
         <li><a style="cursor: pointer;" (click)="onDeleteRecipe()">Delete Recipe</a></li>
-      </ul>
+      </ul> -->
     </div>
   </div>
 </div>
