@@ -52,11 +52,28 @@ export class RecipeEditComponent implements OnInit{
     this.router.navigate(['../'], {relativeTo: this.route}); // navigate up one level
   }
 
-  // selectAll() {
-  //   const allPreferences = this.preferences.map(preference => preference.value);
-    
-  //   console.log(("=========================>>>>>>>>> "+ JSON.stringify(allPreferences)));
-  // }
+  selectAll() {
+    const allPreferences = this.preferences.map(preference => preference.value);
+    this.recipeForm.get('dietaryPreferences').setValue(allPreferences);
+    this.allSelected = true; // Set a flag to indicate that all options are selected
+  }
+
+  deselectAll() {
+    this.recipeForm.get('dietaryPreferences').setValue([]);
+    this.allSelected = false; // Set the flag to indicate that all options are deselected
+  }
+
+  selectAllOptions(option: string) {
+    if (option === "All") {
+      if (this.allSelected) {
+        this.deselectAll(); // If all options are already selected, deselect them
+      } else {
+        this.selectAll(); // If not all options are selected, select them
+      }
+    } else {
+      console.log("preferenceString: " + option);
+    }
+  }
 
   // deselectAll() {
   //   this.recipeForm.get('dietaryPreferences').setValue([]);

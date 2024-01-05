@@ -71,7 +71,7 @@
             <mat-select formControlName="dietaryPreferences" multiple>
               <div class="row" 
               *ngFor="let preference of preferences; let i = index">
-                <mat-option [value]="preference.value">{{ preference.value }}</mat-option>
+                <mat-option [value]="preference.value" (click)="selectAllOptions(preference.value)">{{ preference.value }}</mat-option>
               </div>
             </mat-select>
           </mat-form-field>
