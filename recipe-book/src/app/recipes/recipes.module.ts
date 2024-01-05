@@ -18,7 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { HttpClientModule } from '@angular/common/http';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
-
+import {MatChipsModule} from '@angular/material/chips';
 
 import {CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray} from '@angular/cdk/drag-drop';
 
@@ -48,6 +48,7 @@ import {CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray} from '@angular/cdk/d
     MatIconModule,
     MatMenuModule,
     MatSelectModule,
+    MatChipsModule,
     
     CdkDropList,
     CdkDrag

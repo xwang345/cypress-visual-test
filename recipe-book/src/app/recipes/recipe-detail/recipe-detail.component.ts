@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 import { ActivatedRoute, Router, Params } from '@angular/router';
+import { Preference } from '../../shared/preference.model';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -14,17 +15,21 @@ export class RecipeDetailComponent implements OnInit {
 
   constructor(private recipeService: RecipeService, 
     private route: ActivatedRoute,
-    private router: Router) { 
-
-  }
+    private router: Router) {}
 
   ngOnInit() {
     this.route.params.subscribe((params: Params) => {
-      console.log('===========>' + JSON.stringify(params));
       this.id =+ params['id'];
       this.recipe = this.recipeService.getRecipe(this.id);
+      console.log(`this.recipe: =================> ${JSON.stringify(this.recipe)}`);
     });
   }
+
+  selectAll() {
+  // this.recipe.dietaryPreferences.forEach(preference => {
+  //   // preference.selected = true;
+  // });
+}
 
   onAddToShoppingList() {
     this.recipeService.addIngredientsToShoppingList(this.recipe.ingredients);

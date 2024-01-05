@@ -3,6 +3,7 @@ import { Recipe } from './recipe.model';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
 import { Subject } from 'rxjs';
+import { Preference } from './../shared/preference.model';
 
 @Injectable()
 export class RecipeService{
@@ -25,6 +26,13 @@ export class RecipeService{
   // ];
 
   private recipes: Recipe[] = [];
+  private dietaryPreferences: Preference[] = [
+    new Preference('All'),
+    new Preference('Vegetarian'),
+    new Preference('Gluten Free'),
+    new Preference('Dairy Free'),
+    new Preference('test'),
+  ];
 
   constructor(private slService: ShoppingListService) {}
 
@@ -35,6 +43,14 @@ export class RecipeService{
 
   getRecipes() {
     return this.recipes.slice();
+  }
+
+  getDietaryPreferences() {
+    return this.dietaryPreferences.slice();
+  }
+
+  getDietaryPreference(index: number) {
+    return this.dietaryPreferences[index];
   }
 
   getRecipe(index: number) {

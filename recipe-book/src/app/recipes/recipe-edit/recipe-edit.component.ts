@@ -2,11 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { RecipeService } from '../recipe.service';
-
-interface DietaryPreferences {
-  value: string;
-  viewValue: string;
-}
+import { Preference } from '../../shared/preference.model';
+import { Recipe } from '../recipe.model';
 
 @Component({
   selector: 'app-recipe-edit',
@@ -18,12 +15,8 @@ export class RecipeEditComponent implements OnInit{
   editMode = false;
   recipeForm: FormGroup
   value: string = '';
-  preferences: DietaryPreferences[] = [
-    {value: 'all-0', viewValue: 'All'},
-    {value: 'vegetarian-1', viewValue: 'Vegetarian'},
-    {value: 'gluten-free-2', viewValue: 'Gluten Free'},
-    {value: 'Dairy-free-3', viewValue: 'Dairy Free'}
-  ];
+  allSelected: boolean = false;
+  preferences: Preference[]; // array of preferences
 
   constructor(private route: ActivatedRoute, 
               private recipeService: RecipeService,
@@ -35,9 +28,8 @@ export class RecipeEditComponent implements OnInit{
       this.id = +params['id'];
       this.editMode = params['id'] != null;
       this.initForm(); // initialize the form
-
-      console.log(this.editMode);
     });
+    this.preferences = this.recipeService.getDietaryPreferences(); // get the preferences
   }
 
   onSubmit() {
@@ -60,6 +52,26 @@ export class RecipeEditComponent implements OnInit{
     this.router.navigate(['../'], {relativeTo: this.route}); // navigate up one level
   }
 
+  // selectAll() {
+  //   const allPreferences = this.preferences.map(preference => preference.value);
+    
+  //   console.log(("=========================>>>>>>>>> "+ JSON.stringify(allPreferences)));
+  // }
+
+  // deselectAll() {
+  //   this.recipeForm.get('dietaryPreferences').setValue([]);
+  // }
+
+  // selectOtherOptions(index: number) {
+  //   const preference = this.recipeService.getRecipe(this.id).dietaryPreferences[index];
+  //   const preferenceString = preference.toString();
+  //   if (preferenceString === "All") {
+  //     this.selectAll();
+  //   } else {
+  //     console.log("preferenceString: " + preferenceString);
+  //   }
+  // }
+
   onAddIngredient() { 
     (<FormArray>this.recipeForm.get('ingredients')).push( // cast the form group to a form array
       new FormGroup({
@@ -80,14 +92,14 @@ export class RecipeEditComponent implements OnInit{
     let recipeName = '';
     let recipeImagePath = '';
     let recipeDescription = '';
-    let recipeDietaryPreference = '';
+    let recipePreferences = []; // initialize an empty array
     let recipeIngredients = new FormArray([]); // initialize an empty array
 
     if(this.editMode) {
       const recipe = this.recipeService.getRecipe(this.id);
       recipeName = recipe.name;
       recipeImagePath = recipe.imagePath;
-      recipeDietaryPreference = recipe.dietaryPreference;
+      recipePreferences = recipe.dietaryPreferences;
       recipeDescription = recipe.description;
 
       // if recipe has ingredients
@@ -104,12 +116,13 @@ export class RecipeEditComponent implements OnInit{
           );
         }
       }
-    }
+      
+      }
     this.recipeForm = new FormGroup({
       'name': new FormControl(recipeName, Validators.required),
       'imagePath': new FormControl(recipeImagePath, Validators.required),
       'description': new FormControl(recipeDescription, Validators.required),
-      'dietaryPreference': new FormControl(recipeDietaryPreference, Validators.required),
+      'dietaryPreferences': new FormControl(recipePreferences),
       'ingredients': recipeIngredients
     });
   }

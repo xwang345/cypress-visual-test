@@ -58,6 +58,18 @@
 </div>
 <div class="row">
   <div class="col-xs-12">
+    <div>
+      <mat-chip-listbox *ngFor="let preference of recipe.dietaryPreferences">
+        <mat-chip color="accent">
+          <img matChipAvatar [src]="recipe.imagePath"  alt="Photo of a Recipe"/>
+            {{ preference }}
+          </mat-chip>
+      </mat-chip-listbox>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
     <ul class="list-group">
       <li class="list-group-item" *ngFor="let ingredient of recipe.ingredients">
         {{ ingredient.name }} - ({{ ingredient.amount }})

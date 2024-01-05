@@ -5,7 +5,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { RecipeDetailComponent } from './recipe-detail/recipe-detail.component';
 import { RecipeEditComponent } from './recipe-edit/recipe-edit.component';
 import { RecipeStartComponent } from './recipe-start/recipe-start.component';
-import { RecipesResovlerService } from './recipes-resolver.service';
+import { RecipesResolverService } from './recipes-resolver.service';
 import { RecipesComponent } from './recipes.component';
 
 const routes: Routes = [
@@ -16,19 +16,19 @@ const routes: Routes = [
       { 
         path: '', 
         component: RecipeStartComponent, 
-        resolve: [RecipesResovlerService],
+        resolve: [RecipesResolverService],
         pathMatch: 'full'
       },
       { path: 'new', component: RecipeEditComponent },
       { 
         path: ':id', 
         component: RecipeDetailComponent, 
-        resolve: [RecipesResovlerService] 
+        resolve: [RecipesResolverService] 
       },
       { 
         path: ':id/edit', 
         component: RecipeEditComponent,
-        resolve: [RecipesResovlerService] 
+        resolve: [RecipesResolverService] 
       },
     ]
   }
