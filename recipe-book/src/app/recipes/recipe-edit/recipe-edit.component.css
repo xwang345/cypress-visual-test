@@ -13,3 +13,8 @@ textarea.ng-invalid.ng-touched {
 .example-full-width {
   width: 100%;
 }
+
+mat-option {
+  display: inline-block;
+  margin-left: 7px
+}

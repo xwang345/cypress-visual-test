@@ -75,20 +75,6 @@ export class RecipeEditComponent implements OnInit{
     }
   }
 
-  // deselectAll() {
-  //   this.recipeForm.get('dietaryPreferences').setValue([]);
-  // }
-
-  // selectOtherOptions(index: number) {
-  //   const preference = this.recipeService.getRecipe(this.id).dietaryPreferences[index];
-  //   const preferenceString = preference.toString();
-  //   if (preferenceString === "All") {
-  //     this.selectAll();
-  //   } else {
-  //     console.log("preferenceString: " + preferenceString);
-  //   }
-  // }
-
   onAddIngredient() { 
     (<FormArray>this.recipeForm.get('ingredients')).push( // cast the form group to a form array
       new FormGroup({
@@ -139,7 +125,7 @@ export class RecipeEditComponent implements OnInit{
       'name': new FormControl(recipeName, Validators.required),
       'imagePath': new FormControl(recipeImagePath, Validators.required),
       'description': new FormControl(recipeDescription, Validators.required),
-      'dietaryPreferences': new FormControl(recipePreferences),
+      'dietaryPreferences': new FormControl(recipePreferences, Validators.required),
       'ingredients': recipeIngredients
     });
   }

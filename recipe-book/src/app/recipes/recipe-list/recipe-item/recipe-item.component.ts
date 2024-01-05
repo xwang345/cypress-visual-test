@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 export class RecipeItemComponent implements OnInit, OnDestroy {
   @Input() recipe: Recipe;
   @Input() index: number;
+  @Input() onSelectPreferences: any; // Replace `any` with the actual type of `onSelectPreferences`
   activeItemIndex: number | null = null;
   recipeArray: Recipe[];
   subscription: Subscription
@@ -23,14 +24,13 @@ export class RecipeItemComponent implements OnInit, OnDestroy {
       this.recipeArray = recipes;
     });
     this.recipeArray = this.recipeService.getRecipes();
+    console.log(`onSelectPreferences ==========> ${this.onSelectPreferences.length}`);
   }
 
   drop(event: CdkDragDrop<string[]>) {
     console.log('RecipeItemComponent.drop() event: =========>' + event.previousIndex);
     console.log('RecipeItemComponent.drop() event: ++++++++++' + event.currentIndex);
     this.recipeService.reorderRecipe(event.previousIndex, event.currentIndex);
-    // moveItemInArray(this.recipeArray, event.previousIndex, event.currentIndex);
-    // this.activeItemIndex = event.currentIndex;
   }
 
   ngOnDestroy(): void {

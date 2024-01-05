@@ -11,17 +11,15 @@
     font-family: 'Franklin Gothic Medium';">
       RECIPES BASED ON DIETARY PREFERENCES
     </h2>
-    <mat-chip-listbox>
-      <mat-chip-option></mat-chip-option>
-      <mat-chip-option></mat-chip-option>
-      <mat-chip-option color="accent">Accent fish</mat-chip-option>
-      <mat-chip-option color="warn">Warn fish</mat-chip-option>
+    <mat-chip-listbox
+    *ngFor="let preference of preferences">
+      <mat-chip-option (click)="onSelectPreferencesChange(preference)">{{ preference.value }}</mat-chip-option>
     </mat-chip-listbox>
   </div>
 </div>
 <hr>
 <div class="row">
   <div class="col-xs-12">
-    <app-recipe-item></app-recipe-item>
+    <app-recipe-item [onSelectPreferences]="onSelectPreferences"></app-recipe-item>
   </div>
 </div>

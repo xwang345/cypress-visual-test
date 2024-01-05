@@ -8,17 +8,28 @@
   [routerLink]="[idx]"
   class="list-group-item clearfix"
   active>
-  <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
-  <h4 class="list-group-item-heading">{{ recipeEl.name }}</h4>
-  <span>
-    <p>{{ recipeEl.description }}</p>
-  </span>
-  <span class="pull-right">
-    <img 
-    [src]="recipeEl.imagePath"
-    alt="{{ recipeEl.name }}" 
-    class="img-responsive" 
-    style="max-height: 50px;">
-  </span>
+    <div class="row">
+      <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+      <h4 class="list-group-item-heading">{{ recipeEl.name }}</h4>
+      <span>
+      <mat-chip-listbox *ngFor="let preference of recipeEl.dietaryPreferences" style="display: inline-block; margin-right: 3px;">
+        <mat-chip>
+          {{ preference }}
+        </mat-chip>
+      </mat-chip-listbox>
+      </span>
+      <br/>
+      <br/>
+      <span>
+        <p>{{ recipeEl.description }}</p>
+      </span>
+      <span class="pull-right">
+      <img 
+      [src]="recipeEl.imagePath"
+      alt="{{ recipeEl.name }}" 
+      class="img-responsive" 
+      style="max-height: 50px;">
+      </span>
+    </div>
   </div>
 </div>
