@@ -1,8 +1,9 @@
+<h2 style="color: aliceblue;"> {{ selectedPreference }}</h2>
 <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
   <div 
   class="example-box" 
   cdkDrag
-  *ngFor="let recipeEl of recipeArray; let idx = index"
+  *ngFor="let recipeEl of filteredRecipes; let idx = index"
   [index]="idx"
   style="cursor: pointer;"
   [routerLink]="[idx]"
@@ -33,3 +34,5 @@
     </div>
   </div>
 </div>
+<!-- 
+<app-recipe-list (selectPreferenceChanged)="onFilterChanged()"></app-recipe-list> -->

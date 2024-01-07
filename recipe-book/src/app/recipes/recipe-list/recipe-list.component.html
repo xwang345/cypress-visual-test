@@ -11,15 +11,21 @@
     font-family: 'Franklin Gothic Medium';">
       RECIPES BASED ON DIETARY PREFERENCES
     </h2>
-    <mat-chip-listbox
-    *ngFor="let preference of preferences">
-      <mat-chip-option (click)="onSelectPreferencesChange(preference)">{{ preference.value }}</mat-chip-option>
-    </mat-chip-listbox>
+ 
+      <div *ngFor="let preference of preferences; let i = index" style="color: aliceblue;">
+        <input type="radio"
+        name="filter"
+        [value]="preference.value"
+        [(ngModel)]="selectedPreferences"
+        (selectedPreferencesChange)="selectedPreferences=$event"
+        >
+        <span> {{ preference.value }}</span>
+      </div>
   </div>
 </div>
 <hr>
 <div class="row">
   <div class="col-xs-12">
-    <app-recipe-item [onSelectPreferences]="onSelectPreferences"></app-recipe-item>
+    <app-recipe-item [preferences]="selectedPreferences"></app-recipe-item>
   </div>
 </div>
