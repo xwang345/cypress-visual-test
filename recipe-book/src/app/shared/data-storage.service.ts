@@ -26,7 +26,7 @@ export class DataStorageService {
           return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : []}; // if recipe.ingredients is null, then return an empty array
         });
       }),tap(recipes => {
-        this.recipeService.setRecipes(recipes);
+        this.recipeService.setRecipes(recipes); // tap allows us to execute some code without changing the response data
     }));
   }
 }

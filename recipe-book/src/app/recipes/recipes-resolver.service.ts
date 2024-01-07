@@ -11,6 +11,7 @@ export class RecipesResolverService {
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
       const recipes = this.recipeService.getRecipes();
 
+
       if (recipes.length === 0) {
         this.dataStorageService.fetchRecipes().forEach(recipes => {
           console.log('recipes: ' + JSON.stringify(recipes));

@@ -1,12 +1,14 @@
 <h2 style="color: aliceblue;"> {{ selectedPreference }}</h2>
-<div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+<div cdkDropList class="example-list">
   <div 
   class="example-box" 
   cdkDrag
-  *ngFor="let recipeEl of filteredRecipes; let idx = index"
-  [index]="idx"
+  *ngFor="let recipeEl of filteredRecipes; index as i"
+  [index]="i"
+  [cdkDropListData] = "filteredRecipes"
   style="cursor: pointer;"
-  [routerLink]="[idx]"
+  [routerLink]="[i]"
+  (cdkDropListDropped)="onDrop($event)"
   class="list-group-item clearfix"
   active>
     <div class="row">
