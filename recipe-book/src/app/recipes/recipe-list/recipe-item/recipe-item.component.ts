@@ -30,7 +30,7 @@ export class RecipeItemComponent implements OnInit, OnChanges, OnDestroy {
       this.recipeArray = recipes;
     });
     this.recipeArray = this.recipeService.getRecipes();
-    console.log(`this.parentData ${this.preferences}`);
+    // console.log(`this.parentData ${this.preferences}`);
   }
 
   /**
@@ -57,6 +57,8 @@ export class RecipeItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onDrop(event: CdkDragDrop<string[]>) {
+    console.log(`event.previousIndex: ${event.previousIndex}`);
+    console.log(`event.currentIndex: ${event.currentIndex}`);
     moveItemInArray(this.filteredRecipes, event.previousIndex, event.currentIndex);
   }
 

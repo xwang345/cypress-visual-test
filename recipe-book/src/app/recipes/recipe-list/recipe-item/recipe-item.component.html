@@ -1,5 +1,5 @@
-<h2 style="color: aliceblue;"> {{ selectedPreference }}</h2>
-<div cdkDropList class="example-list">
+<h2 style="color: aliceblue; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif"> {{ selectedPreference }}</h2>
+<div cdkDropList class="example-list" (cdkDropListDropped)="onDrop($event)">
   <div 
   class="example-box" 
   cdkDrag
@@ -8,7 +8,6 @@
   [cdkDropListData] = "filteredRecipes"
   style="cursor: pointer;"
   [routerLink]="[i]"
-  (cdkDropListDropped)="onDrop($event)"
   class="list-group-item clearfix"
   active>
     <div class="row">
