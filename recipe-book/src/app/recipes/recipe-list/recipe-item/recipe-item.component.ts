@@ -57,8 +57,6 @@ export class RecipeItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onDrop(event: CdkDragDrop<string[]>) {
-    console.log(`event.previousIndex: ${event.previousIndex}`);
-    console.log(`event.currentIndex: ${event.currentIndex}`);
     moveItemInArray(this.filteredRecipes, event.previousIndex, event.currentIndex);
   }
 

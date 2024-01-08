@@ -79,6 +79,11 @@
             <mat-icon>cloud_download</mat-icon>
             <span (click)="onFetchData()">Fetch Data</span>
           </button>
+          <button mat-menu-item
+          routerLinkActive="active" routerLink="/setting-page" >
+            <mat-icon>settings</mat-icon>
+            <span>Settings</span>
+          </button>
           <button mat-menu-item>
             <mat-icon>time_to_leave</mat-icon>
             <span *ngIf="isAuthenticated" (click)="onLogout()">Logout</span>

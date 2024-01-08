@@ -17,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
+import { SettingPageModule } from './setting-page/setting-page.model';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { MatListModule } from '@angular/material/list';
     RecipesRoutingModule,
     ShoppingListModule,
     RecipesModule,
+    SettingPageModule,
     SharedModule,
     CoreModule,
     AuthModule,
