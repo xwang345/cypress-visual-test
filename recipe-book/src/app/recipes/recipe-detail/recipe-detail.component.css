@@ -1,3 +1,12 @@
 .large-icon-button {
   font-size: 100%;
 }
+
+.fixed-position {
+  position: fixed;
+  top: 11%;
+  left: 100;
+  width: 40%;
+  height: 100%;
+  overflow: auto;
+}
