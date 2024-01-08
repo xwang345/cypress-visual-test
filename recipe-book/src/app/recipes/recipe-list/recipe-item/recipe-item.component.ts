@@ -4,6 +4,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { RecipeService } from '../../recipe.service';
 import { Subscription } from 'rxjs';
 import { RecipeSortService } from '../../recipe-sort.service';
+import { DataStorageService } from '../../../shared/data-storage.service';
 
 @Component({
   selector: 'app-recipe-item',
@@ -21,7 +22,8 @@ export class RecipeItemComponent implements OnInit, OnChanges, OnDestroy {
   filteredRecipes: any[];
 
   constructor(private recipeService: RecipeService,
-              private recipeSortService: RecipeSortService) {}
+              private recipeSortService: RecipeSortService,
+              private dataStorageService: DataStorageService) {}
 
   ngOnInit() {
     this.subscription = this.recipeService.recipesChanged.subscribe((recipes: Recipe[]) => {
@@ -41,19 +43,22 @@ export class RecipeItemComponent implements OnInit, OnChanges, OnDestroy {
     if (changes.preferences) {
       this.selectedPreference = changes.preferences.currentValue;
       this.filterRecipes();
-      this.recipeSortService.updateRecipes(this.filteredRecipes);
     }
   }
 
   filterRecipes() {
-    this.filteredRecipes = this.recipeArray.filter(recipe => 
-      recipe.dietaryPreferences.includes(this.selectedPreference)
-    );
+    this.dataStorageService.fetchRecipes().subscribe(sortedRecipe => {
+       this.filteredRecipes = sortedRecipe.filter(recipe => 
+        recipe.dietaryPreferences.includes(this.selectedPreference as any)
+      );
+
+      this.recipeSortService.updateRecipes(this.filteredRecipes);
+    });
   }
 
   onDrop(event: CdkDragDrop<string[]>) {
-  moveItemInArray(this.filteredRecipes, event.previousIndex, event.currentIndex);
-}
+    moveItemInArray(this.filteredRecipes, event.previousIndex, event.currentIndex);
+  }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
