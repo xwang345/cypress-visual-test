@@ -45,11 +45,15 @@
           </div>
         </div>
         <h3 style="color: aliceblue;"><b>or</b> enter your food image URL down below</h3>
-        <div *ngFor="let file of files">
-          <uploader [file]="file" (downloadUrlReady)="handleDownloadUrl($event)">
-            {{ $event }}
-            {{ file.name }}
-          </uploader>
+        <div class="col-xs-12">
+          <div *ngFor="let file of files" [files]="files">
+            <uploader [file]="file" 
+            (downloadUrlReady)="handleDownloadUrl($event)" 
+            [isHovering]="toggleHover($event)">
+              {{ $event }}
+              {{ file.name }}
+            </uploader>
+          </div>
         </div>
       </div>
       <div class="row">
