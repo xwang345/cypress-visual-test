@@ -1,0 +1,29 @@
+.dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  border: 2px dashed #ccc;
+  border-radius: 5px;
+  background: #575757;
+  
+  &.hovering {
+    border: 2px dashed rgb(240, 143, 144);
+    color: rgb(240, 143, 144) !important;
+  }
+}
+
+mat-progress-bar {
+  height: 10px;
+}
+
+button {
+  background-color: dimgray;
+}
+
+a {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; 
+  color: rgb(244, 80, 51); 
+  font-size: larger;
+  cursor: pointer;
+}

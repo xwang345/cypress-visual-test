@@ -5,13 +5,15 @@ import { AlertComponent } from './alert/alert.component';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 import { DropdownDirective } from './dropdown.directive';
 import { PlaceholderDirective } from './placeholder/placeholder.directive';
+import { DropzoneDirective } from './dropzone.directive';
 
 @NgModule({
   declarations: [
     AlertComponent,
     LoadingSpinnerComponent,
     DropdownDirective,
-    PlaceholderDirective
+    PlaceholderDirective,
+    DropzoneDirective
   ],
   imports: [CommonModule],
   exports: [
@@ -19,7 +21,8 @@ import { PlaceholderDirective } from './placeholder/placeholder.directive';
     LoadingSpinnerComponent,
     DropdownDirective,
     PlaceholderDirective,
-    CommonModule
+    CommonModule,
+    DropzoneDirective
   ]
 })
 export class SharedModule {

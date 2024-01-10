@@ -19,6 +19,7 @@
         </div>
       </div>
       <br>
+      <hr>
       <div class="row">
         <div class="col-xs-12">
           <div class="form-group">
@@ -29,16 +30,40 @@
         </div>
       </div>
       <div class="row">
+        <div class="dropzone"
+        dropzone
+        (hovered)="toggleHover($event)"
+        (dropped)="onDrop($event)"
+        [class.hovering]="isHovering">
+          <div class="row">
+            <p style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; color: aliceblue; font-size: larger;">Drag and drop your food image here</p>
+            <div class="file">
+              <label class="file-label">
+                <input class="file-input" type="file" (change)="onDrop($event.target.files)" style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; color: aliceblue; font-size: larger;">
+              </label>
+            </div>
+          </div>
+        </div>
+        <h3 style="color: aliceblue;"><b>or</b> enter your food image URL down below</h3>
+        <div *ngFor="let file of files">
+          <uploader [file]="file" (downloadUrlReady)="handleDownloadUrl($event)">
+            {{ $event }}
+            {{ file.name }}
+          </uploader>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-xs-12">
           <div class="form-group">
-            <label for="imagePath">Image URL</label>
+            <label for="imagePath"></label>
             <mat-form-field class="example-full-width">
               <input 
               matInput
               type="text" 
               id="imagePath" 
               formControlName="imagePath"
-              #imagePath>
+              #imagePath
+              placeholder="Image URL">
             </mat-form-field>
           </div>
         </div>

@@ -3,31 +3,34 @@
     <form (ngSubmit)="onSubmit(f)" #f="ngForm">
       <div class="row">
         <div class="col-sm-5 form-group">
-          <label for="name">Name</label>
-          <input 
-          (input)="onNameChange($event.target.value)"
-          type="text" 
-          id="name" 
-          class="form-control"
-          name="name"
-          ngModel
-          required
-          >
+          <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input 
+              matInput 
+              (input)="onNameChange($event.target.value)"
+              type="text" 
+              id="name" 
+              name="name"
+              ngModel
+              required
+              >
+          </mat-form-field>
         </div>
         <div class="col-sm-2 form-group">
-          <label for="amount">Amount</label>
-          <input 
-          type="number" 
-          id="amount" 
-          class="form-control"
-          name="amount"
-          ngModel
-          required
-          pattern="^[1-9]+[0-9]*$"
-          >
+          <mat-form-field>
+            <mat-label for="amount">Amount</mat-label>
+            <input 
+            matInput 
+            type="number" 
+            id="amount" 
+            name="amount"
+            ngModel
+            required
+            pattern="^[1-9]+[0-9]*$"
+            >
+          </mat-form-field>
         </div>
         <div class="col-xs-12 form-group">
-          <label for="name">Name</label>
           <button class="btn btn-success" 
           type="submit" 
           [disabled]="!f.valid"

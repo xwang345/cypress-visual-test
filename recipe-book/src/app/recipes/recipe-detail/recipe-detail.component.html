@@ -1,81 +1,76 @@
 <div class="fixed-position">
-  <div class="row">
-    <div class ="col-xs-12">
-      <img 
-      [src]="recipe.imagePath" 
-      alt="{{ recipe.name }}" 
-      class="img-responsive"
-      style="max-height: 300px;">
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-      <h1 style="color: aliceblue;">{{ recipe.name }}</h1>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="btn-group">
-        <button 
-        class="btn btn-primary dropdown-toggle large-icon-button"
-        [matMenuTriggerFor]="menu"
-        appDropdown
-        mat-raised-button
-        aria-label="Example icon-button with a menu"
-        color="primary">
-          Manage Recipe <span class="caret"></span>
-        </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="onAddToShoppingList()">
-            <mat-icon>add_shopping_cart</mat-icon>
-            <span>To Shopping List</span>
-          </button>
-          <button mat-menu-item (click)="onEditRecipe()">
-            <mat-icon>edit</mat-icon>
-            <span>Edit Recipe</span>
-          </button>
-          <button mat-menu-item (click)="onDeleteRecipe()">
-            <mat-icon>delete</mat-icon>
-            <span>Delete Recipe</span>
-          </button>
-        </mat-menu>
-        <!-- <ul class="dropdown-menu">
-          <li><a (click)="onAddToShoppingList()" style="cursor: pointer;">
-            To Shopping List</a></li>
-          <li><a style="cursor: pointer;" (click)="onEditRecipe()">
-            Edit Recipe</a></li>
-          <li><a style="cursor: pointer;" (click)="onDeleteRecipe()">Delete Recipe</a></li>
-        </ul> -->
+  <mat-card>
+    <div class="row">
+      <div class ="col-xs-12">
+        <img 
+        [src]="recipe.imagePath" 
+        alt="{{ recipe.name }}" 
+        class="img-responsive"
+        style="max-height: 300px;">
       </div>
     </div>
-  </div>
-  
-  <div class="row">
-    <div class="col-xs-12">
-      <p style="color: aliceblue;">
-        {{ recipe.description }}
-      </p>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-      <div>
-        <mat-chip-listbox *ngFor="let preference of recipe.dietaryPreferences">
-          <mat-chip color="accent">
-            <img matChipAvatar [src]="recipe.imagePath"  alt="Photo of a Recipe"/>
-              {{ preference }}
-            </mat-chip>
-        </mat-chip-listbox>
+    <div class="row">
+      <div class="col-xs-12">
+        <h1 style="color: aliceblue;">{{ recipe.name }}</h1>
       </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-      <ul class="list-group">
-        <li class="list-group-item" *ngFor="let ingredient of recipe.ingredients">
-          {{ ingredient.name }} - ({{ ingredient.amount }})
-        </li>
-      </ul>
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="btn-group">
+          <button 
+          class="btn btn-primary dropdown-toggle large-icon-button"
+          [matMenuTriggerFor]="menu"
+          appDropdown
+          mat-raised-button
+          aria-label="Example icon-button with a menu"
+          color="primary">
+            Manage Recipe <span class="caret"></span>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="onAddToShoppingList()">
+              <mat-icon>add_shopping_cart</mat-icon>
+              <span>To Shopping List</span>
+            </button>
+            <button mat-menu-item (click)="onEditRecipe()">
+              <mat-icon>edit</mat-icon>
+              <span>Edit Recipe</span>
+            </button>
+            <button mat-menu-item (click)="onDeleteRecipe()">
+              <mat-icon>delete</mat-icon>
+              <span>Delete Recipe</span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
     </div>
-  </div>
+    
+    <div class="row">
+      <div class="col-xs-12">
+        <p style="color: aliceblue;">
+          {{ recipe.description }}
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <div>
+          <mat-chip-listbox *ngFor="let preference of recipe.dietaryPreferences">
+            <mat-chip color="accent">
+              <img matChipAvatar [src]="recipe.imagePath"  alt="Photo of a Recipe"/>
+                {{ preference }}
+              </mat-chip>
+          </mat-chip-listbox>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let ingredient of recipe.ingredients">
+            {{ ingredient.name }} - ({{ ingredient.amount }})
+          </li>
+        </ul>
+      </div>
+    </div>
+  </mat-card>
 </div>

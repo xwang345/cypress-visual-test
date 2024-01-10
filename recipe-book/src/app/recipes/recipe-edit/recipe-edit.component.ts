@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { RecipeService } from '../recipe.service';
@@ -17,6 +17,8 @@ export class RecipeEditComponent implements OnInit{
   value: string = '';
   allSelected: boolean = false;
   preferences: Preference[]; // array of preferences
+  isHovering: Boolean;
+  files: File[] = [];
 
   constructor(private route: ActivatedRoute, 
               private recipeService: RecipeService,
@@ -32,6 +34,21 @@ export class RecipeEditComponent implements OnInit{
     this.preferences = this.recipeService.getDietaryPreferences(); // get the preferences
   }
 
+  toggleHover(event: Boolean) {
+    this.isHovering = event;
+  }
+
+   onDrop(files: FileList) {
+    for (let i = 0; i < files.length; i++) {
+      this.files.push(files.item(i));
+    }
+  }
+
+  handleDownloadUrl(downloadUrl: string) {
+    console.log(`===========================================> downloadUrl from the uploader.component.html: ${downloadUrl}`);
+    this.recipeForm.get('imagePath').setValue(downloadUrl);
+  }
+  
   onSubmit() {
     // const newRecipe = new Recipe( // create a new recipe
     //   this.recipeForm.value['name'], 
@@ -43,6 +60,7 @@ export class RecipeEditComponent implements OnInit{
     if (this.editMode) {
       this.recipeService.updateRecipe(this.id, this.recipeForm.value); // update the recipe
     } else {
+      console.log(`this.recipeForm.value: ${this.recipeForm.value}`)
       this.recipeService.addRecipe(this.recipeForm.value); // add the recipe
     }
     this.onCancel(); // navigate up one level
@@ -119,8 +137,7 @@ export class RecipeEditComponent implements OnInit{
           );
         }
       }
-      
-      }
+    }
     this.recipeForm = new FormGroup({
       'name': new FormControl(recipeName, Validators.required),
       'imagePath': new FormControl(recipeImagePath, Validators.required),

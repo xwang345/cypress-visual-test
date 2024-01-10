@@ -19,8 +19,16 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import {MatChipsModule} from '@angular/material/chips';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { AngularFireModule } from '@angular/fire/compat';
+import {MatCardModule} from '@angular/material/card';
+
 
 import { CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray } from '@angular/cdk/drag-drop';
+import { environment } from '../../environments/environment';
+import { UploaderComponent } from './recipe-edit/uploader/uploader.component';
 
 
 @NgModule({
@@ -31,6 +39,7 @@ import { CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray } from '@angular/cdk
     RecipeItemComponent,
     RecipeStartComponent,
     RecipeEditComponent,
+    UploaderComponent
   ],
   imports: [
     BrowserModule,
@@ -49,6 +58,22 @@ import { CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray } from '@angular/cdk
     MatMenuModule,
     MatSelectModule,
     MatChipsModule,
+    MatProgressBarModule,
+    MatCardModule,
+    AngularFireModule.initializeApp(
+      {
+        apiKey: "AIzaSyDkStIYFgEKCTV7zu8bIg_9Of53VKwIpcg",
+        authDomain: "ng-xwang345-recipe-book.firebaseapp.com",
+        databaseURL: "https://ng-xwang345-recipe-book-default-rtdb.firebaseio.com",
+        projectId: "ng-xwang345-recipe-book",
+        storageBucket: "ng-xwang345-recipe-book.appspot.com",
+        messagingSenderId: "90054152260",
+        appId: "1:90054152260:web:cf3df92bf5c615355f2c11",
+        measurementId: "G-X4ZN5N9N9H"
+      }
+    ),
+    AngularFirestoreModule,
+    AngularFireStorageModule,
     
     CdkDropList,
     CdkDrag
