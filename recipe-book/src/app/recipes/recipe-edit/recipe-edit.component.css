@@ -33,3 +33,12 @@ mat-option {
     color: rgb(241, 144, 114) !important;
   }
 }
+
+.fixed-position {
+  position: fixed;
+  /* top: 11%; */
+  /* left: 100;*/
+  width: 40%;
+  height: 100%;
+  overflow: auto;
+}

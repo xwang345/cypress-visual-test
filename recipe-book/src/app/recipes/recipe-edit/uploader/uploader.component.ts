@@ -14,11 +14,13 @@ export class UploaderComponent implements OnInit {
   @Input() file: File;
   task: AngularFireUploadTask;
   percentage: Observable<number>;
+  // bytesTransferred: number;
+  // totalBytes: number;
   snapshot: Observable<any>;
   downloadURL: string;
   recipeForm: FormGroup;
   @Output() downloadUrlReady = new EventEmitter<string>();
-  @Input() isHovering;
+  // @Input() isHovering;
   fileName: string;
   @Input() files: File[];
 
@@ -48,18 +50,49 @@ export class UploaderComponent implements OnInit {
     // Progress monitoring
     this.percentage = this.task.percentageChanges();
 
-
     this.snapshot = this.task.snapshotChanges().pipe(
-      tap(console.log), // tap into the stream
+      tap(console.log), // tap into the stream,
       // The file's download URL
       finalize(async () => { // finalize is called when the task is complete, this is where we would update our database
         this.downloadURL = await ref.getDownloadURL().toPromise();
+
+         console.log(`============================><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<! downloadURL: ${this.downloadURL}`)
 
         this.db.collection('files').add( { downloadURL: this.downloadURL, path });
         
         this.downloadUrlReady.emit(this.downloadURL);
       }),
     );
+  }
+
+  onPause() {
+    console.log(`============================================`);
+    this.snapshot = this.task.snapshotChanges().pipe(
+      tap(console.log));
+      this.task.pause();
+  }
+
+  onResume() {
+    this.task.resume();
+    // The storage path
+    const path = `recipes/${this.fileName}`;
+
+    const ref = this.storage.ref(path);
+
+    this.snapshot = this.task.snapshotChanges().pipe(
+      tap(console.log),
+      finalize(async() => {
+        this.downloadURL = await ref.getDownloadURL().toPromise()
+        this.downloadUrlReady.emit(this.downloadURL);
+      }));
+  }
+
+  onCancel() {
+    this.snapshot = this.task.snapshotChanges().pipe(
+      tap(console.log));
+    this.task.cancel();
+    this.percentage = null;
+    this.files = [];
   }
 
   /**
@@ -80,7 +113,7 @@ export class UploaderComponent implements OnInit {
     this.snapshot = null;
     this.percentage = null;
     this.task = null;
-    this.isHovering = false;
+    // this.isHovering = false;
     this.files = [];
 
     this.storage.ref(path).delete();

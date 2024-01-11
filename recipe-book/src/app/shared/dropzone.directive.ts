@@ -8,7 +8,6 @@ export class DropzoneDirective {
   @Output() hovered = new EventEmitter<boolean>();
 
   @HostListener('drop', ['$event'])
-
   onDrop($event) {
     $event.preventDefault();
     this.dropped.emit($event.dataTransfer.files);

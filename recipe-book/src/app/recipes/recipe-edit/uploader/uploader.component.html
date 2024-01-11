@@ -1,20 +1,20 @@
 <div class="row" style="color: aliceblue;">
   <div *ngIf="percentage | async as pct">
     <div class="col-xs-12">
-      <mat-progress-bar mode="determinate" [value]="pct" color="primary" bufferValue ="75" max="100"></mat-progress-bar>
+      <mat-progress-bar mode="determinate" [value]="pct" color="warn" bufferValue ="15" max="100" style="position:relative;"></mat-progress-bar>
       {{ pct | number }}%
     </div>
   </div>
-  <div *ngIf="snapshot | async as snap">
-    {{ snap.bytesTransferred | number }} / {{ snap.totalBytes | number }}
+  <div *ngIf="snapshot | async as snap" style="position:relative;">
+    {{ snap.bytesTransferred }} / {{ snap.totalBytes }}
     <div *ngIf="downloadURL as url">
-      <h3>Results!</h3>
+      <h3>Uploaded!</h3>
       <!-- <img [src]="url" class="img-responsive"> -->
       <a [href]="url" target="_blank" rel="noopener">Download Me!</a>
     </div>
-    <button (click)="task.pause()" [disabled]="!isActive(snap)">Pause</button>
-    <button (click)="task.cancel()" [disabled]="!isActive(snap)">Cancel</button>
-    <button (click)="task.resume()" [disabled]="!(snap?.state === 'paused')">Resume</button>
+    <button (click)="onPause()" [disabled]="!isActive(snap)">Pause</button>
+    <button (click)="onCancel()" [disabled]="!isActive(snap)">Cancel</button>
+    <button (click)="onResume()" [disabled]="!(snap?.state === 'paused')">Resume</button>
     <button (click)="deleteAttachment()" [disabled]="isActive(snap)">Delete</button>
   </div>
 </div>
