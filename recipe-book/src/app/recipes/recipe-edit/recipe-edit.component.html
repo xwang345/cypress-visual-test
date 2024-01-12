@@ -1,47 +1,32 @@
-<mat-card class="fixed-position">
-  <div class="col-xs-12">
-    <div class="row">
-      <div class="col-xs-12">
-        <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+  <mat-card class="fixed-position">
+    <div class="col-xs-12">
+      <div class="row">
+        <div class="col-xs-12">
           <div class="row">
             <div class="col-xs-12">
-              <button 
-              class="btn btn-success" 
-              type="submit"
-              [disabled]="!recipeForm.valid"
-              mat-fab
-              color="primary"
-              style="margin-right: 10px;">Save</button>
-              <button 
-              class="btn btn-danger" 
-              type="button"
-              mat-fab
-              color="accent"
-              (click)="onCancel()">Cancel</button>
+              <button class="btn btn-success" type="submit" [disabled]="!recipeForm.valid" mat-fab color="primary" style="margin-right: 10px;">Save</button>
+              <button class="btn btn-danger" type="button" mat-fab color="accent" (click)="onCancel()">Cancel</button>
             </div>
           </div>
-          <br>
-          <hr>
+          <br />
+          <hr />
           <div class="row">
             <div class="col-xs-12">
               <div class="form-group">
                 <mat-form-field class="example-full-width">
-                  <input matInput placeholder="Name" value="Sushi" id="name" formControlName="name">
+                  <input matInput placeholder="Name" value="Sushi" id="name" formControlName="name" />
                 </mat-form-field>
               </div>
             </div>
           </div>
           <div class="row">
-            <div class="dropzone"
-            dropzone
-            (hovered)="toggleHover($event)"
-            (dropped)="onDrop($event)"
-            [class.hovering]="isHovering">
+            <div class="dropzone" dropzone (hovered)="toggleHover($event)" (dropped)="onDrop($event)" [class.hovering]="isHovering">
               <div class="file">
                 <p style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; color: aliceblue; font-size: larger;">Drag and drop your food image here</p>
                 <div class="file">
                   <label class="file-label">
-                    <input class="file-input" type="file" (change)="onDrop($event.target.files)" style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; color: aliceblue; font-size: larger;">
+                    <input class="file-input" type="file" (change)="onDrop($event.target.files)" style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; color: aliceblue; font-size: larger;" />
                   </label>
                 </div>
               </div>
@@ -49,10 +34,7 @@
             <h3 style="color: aliceblue;"><b>or</b> enter your food image URL down below</h3>
             <div class="col-xs-12">
               <div *ngFor="let file of files">
-                <uploader [file]="file" 
-                (downloadUrlReady)="handleDownloadUrl($event)" 
-                [isHovering]="toggleHover($event)">
-                </uploader>
+                <uploader [file]="file" (downloadUrlReady)="handleDownloadUrl($event)" [isHovering]="toggleHover($event)"> </uploader>
               </div>
             </div>
           </div>
@@ -61,20 +43,14 @@
               <div class="form-group">
                 <label for="imagePath"></label>
                 <mat-form-field class="example-full-width">
-                  <input 
-                  matInput
-                  type="text" 
-                  id="imagePath" 
-                  formControlName="imagePath"
-                  #imagePath
-                  placeholder="Image URL">
+                  <input matInput type="text" id="imagePath" formControlName="imagePath" #imagePath placeholder="Image URL" />
                 </mat-form-field>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col-xs-12">
-              <img [src]="imagePath.value" class="img-responsive">
+              <img [src]="imagePath.value" class="img-responsive" />
             </div>
           </div>
           <div class="row">
@@ -82,13 +58,7 @@
               <div class="form-group">
                 <mat-form-field class="example-full-width">
                   <mat-label>Description</mat-label>
-                  <textarea 
-                  matInput 
-                  placeholder="Ex. It makes me feel..."
-                  formControlName="description"
-                  type="text"
-                  rows="10"
-                  ></textarea>
+                  <textarea matInput placeholder="Ex. It makes me feel..." formControlName="description" type="text" rows="10"></textarea>
                 </mat-form-field>
               </div>
             </div>
@@ -98,8 +68,7 @@
               <mat-form-field>
                 <mat-label>Dietary Preferences</mat-label>
                 <mat-select formControlName="dietaryPreferences" multiple>
-                  <div
-                  *ngFor="let preference of preferences; let i = index">
+                  <div *ngFor="let preference of preferences; let i = index">
                     <mat-option [value]="preference.value" (click)="selectAllOptions(preference.value)">{{ preference.value }}</mat-option>
                   </div>
                 </mat-select>
@@ -108,45 +77,56 @@
           </div>
           <div class="row">
             <div class="col-xs-12" formArrayName="ingredients">
-              <div 
-              class="row" 
-              *ngFor="let ingredientCtrl of $any(recipeForm.get('ingredients')).controls; let i = index"
-              [formGroupName]="i"
-              style="margin-top: 10px;">
+              <div class="row" *ngFor="let ingredientCtrl of $any(recipeForm.get('ingredients')).controls; let i = index" [formGroupName]="i" style="margin-top: 10px;">
                 <div class="col-xs-8">
-                  <input
-                  type="text"
-                  class="form-control"
-                  formControlName="name">
+                  <input type="text" class="form-control" formControlName="name" />
                 </div>
                 <div class="col-xs-2">
-                  <input
-                  type="number"
-                  class="form-control"
-                  formControlName="amount">
+                  <input type="number" class="form-control" formControlName="amount" />
                 </div>
                 <div class="col-xs-2">
-                  <button 
-                  type="button"
-                  mat-mini-fab
-                  color="warn"
-                  (click)="onDeleteIngredient(i)">X</button>
+                  <button type="button" mat-mini-fab color="warn" (click)="onDeleteIngredient(i)">X</button>
                 </div>
               </div>
-              <hr>
+              <hr />
               <div class="row">
                 <div class="col-xs-12">
-                  <button 
-                  type="button"
-                  mat-flat-button
-                  color="primary"
-                  (click)="onAddIngredient()">Add Ingredient</button>
+                  <button type="button" mat-flat-button color="primary" (click)="onAddIngredient()">Add Ingredient</button>
                 </div>
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
-  </div>
-</mat-card>
+    <br />
+    <hr />
+    <div class="row">
+      <div class="col-xs-12" formArrayName="instructions">
+        <div class="row" *ngFor="let instructionCtrl of $any(recipeForm.get('instructions')).controls; idx as index" [formGroupName]="idx" style="margin-top: 10px;">
+          <div class="col-xs-8">
+            <mat-form-field class="example-full-width">
+              <mat-label>Instruction</mat-label>
+              <textarea matInput placeholder="Ex. It makes me feel..." id="instDescription" formControlName="instDescription" type="text" rows="10"></textarea>
+            </mat-form-field>
+          </div>
+          <div class="col-xs-8">
+            <mat-form-field class="example-full-width">
+              <mat-label>Image URL</mat-label>
+              <input matInput #insImagePath type="text" id=" insImagePath" formControlName="insImagePath" />
+            </mat-form-field>
+          </div>
+          <div class="col-xs-2">
+            <button type="button" mat-raised-button color="warn" (click)="onDeleteInstruction(i)">Delete</button>
+          </div>
+          <div class="col-xs-12">
+            <img [src]="insImagePath.value" class="img-responsive" />
+          </div>
+        </div>
+        <div class="col-xs-12">
+          <button type="button" mat-flat-button color="primary" (click)="onAddInstruction()">Add Instruction</button>
+        </div>
+      </div>
+    </div>    
+  </mat-card>
+</form>
