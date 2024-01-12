@@ -34,6 +34,14 @@ export class RecipeEditComponent implements OnInit{
     this.preferences = this.recipeService.getDietaryPreferences(); // get the preferences
   }
 
+  formatLabel(value: number): string {
+    if (value >= 100) {
+      return Math.round(value / 100) + '%';
+    }
+
+    return `${value}`;
+  }
+
   toggleHover(event: Boolean) {
     this.isHovering = event;
   }

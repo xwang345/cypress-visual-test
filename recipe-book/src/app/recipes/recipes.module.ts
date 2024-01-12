@@ -23,8 +23,10 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { AngularFireModule } from '@angular/fire/compat';
-import {MatCardModule} from '@angular/material/card';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatCardModule } from '@angular/material/card';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatTableModule } from '@angular/material/table';
 
 import { CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { UploaderComponent } from './recipe-edit/uploader/uploader.component';
@@ -60,6 +62,8 @@ import { UploaderComponent } from './recipe-edit/uploader/uploader.component';
     MatProgressBarModule,
     MatCardModule,
     MatTabsModule,
+    MatSliderModule,
+    MatTableModule,
     AngularFireModule.initializeApp(
       {
         apiKey: "AIzaSyDkStIYFgEKCTV7zu8bIg_9Of53VKwIpcg",

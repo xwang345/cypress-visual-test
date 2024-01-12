@@ -34,11 +34,6 @@ mat-option {
   }
 }
 
-/* .fixed-position { */
-  /* position: fixed; */
-  /* top: 11%; */
-  /* left: 100;*/
-  /* width: 40%; */
-  /* height: 100%; */
-  /* overflow: auto; */
-/* } */
+.instructionDropZone {
+  display: flex;
+}
