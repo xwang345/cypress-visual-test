@@ -155,7 +155,7 @@ export class RecipeEditComponent implements OnInit{
         for(let instruction of recipe.instructions) {
           recipeInstructions.push( // push a new form group into the form array
             new FormGroup({
-              'instDescription': new FormControl(instruction.instDescription, Validators.required),
+              'instDescription': new FormControl(instruction.instDescription, Validators.maxLength(19999)),
               'insImagePath': new FormControl(instruction.insImagePath, Validators.required)
             })
           );
@@ -168,7 +168,7 @@ export class RecipeEditComponent implements OnInit{
       'description': new FormControl(recipeDescription, Validators.required),
       'dietaryPreferences': new FormControl(recipePreferences, Validators.required),
       'ingredients': recipeIngredients,
-      'instructions': recipeInstructions,
+      'instructions': recipeInstructions
     });
   }
 

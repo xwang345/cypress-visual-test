@@ -23,7 +23,9 @@ export class DataStorageService {
     return this.http.get<Recipe[]>('https://ng-xwang345-recipe-book-default-rtdb.firebaseio.com/recipes.json')
     .pipe(map(recipes => { // map is an rxjs operator
         return recipes.map(recipe => { // map is a javascript array method
-          return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : []}; // if recipe.ingredients is null, then return an empty array
+          console.log(`DataStorageService.fetchRecipes() recipe: ${JSON.stringify(recipe)}`);
+          return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : [], // if recipe.ingredients is null, then return an empty array
+            instructions: recipe.instructions ? recipe.instructions : []}; // if recipe.instructions is null, then return an empty array
         });
       }),tap(recipes => {
         this.recipeService.setRecipes(recipes); // tap allows us to execute some code without changing the response data

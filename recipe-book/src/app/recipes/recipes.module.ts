@@ -26,8 +26,7 @@ import { AngularFireModule } from '@angular/fire/compat';
 import {MatCardModule} from '@angular/material/card';
 import {MatTabsModule} from '@angular/material/tabs';
 
-import { CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray } from '@angular/cdk/drag-drop';
-import { environment } from '../../environments/environment';
+import { CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { UploaderComponent } from './recipe-edit/uploader/uploader.component';
 
 
