@@ -18,6 +18,12 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
 import { SettingPageModule } from './setting-page/setting-page.model';
+import { NZ_I18N } from 'ng-zorro-antd/i18n';
+import { en_US } from 'ng-zorro-antd/i18n';
+import { registerLocaleData } from '@angular/common';
+import en from '@angular/common/locales/en';
+
+registerLocaleData(en);
 
 @NgModule({
   declarations: [
@@ -45,6 +51,9 @@ import { SettingPageModule } from './setting-page/setting-page.model';
     MatMenuModule,
     MatListModule
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  providers: [
+    { provide: NZ_I18N, useValue: en_US }
+  ]
 })
 export class AppModule { }

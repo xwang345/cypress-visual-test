@@ -46,13 +46,15 @@ export class RecipeService{
   }
 
   getRecipeInstructions(index: any) {
-    console.log(`typeof index: ${index}`);
-    console.log(`typeof index: ${Number.NaN}`);
     if (index === Number.NaN) {
       return null;
     } else {
       return this.recipes[index].instructions.slice();
     }   
+  }
+
+  getAllRecipeInstructions() {
+    return this.recipes.map(recipe => recipe.instructions);
   }
   
   updateRecipeInstructions(index: number, instructions: any) {

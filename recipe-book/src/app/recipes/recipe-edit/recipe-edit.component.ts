@@ -29,6 +29,7 @@ export class RecipeEditComponent implements OnInit, OnChanges{
               private router: Router,
               private formBuilder: FormBuilder) { 
                 this.recipeForm = this.formBuilder.group({
+                  ingredients: this.formBuilder.array([]),
                   instructions: this.formBuilder.array([])
                 });
               }
@@ -40,11 +41,14 @@ export class RecipeEditComponent implements OnInit, OnChanges{
         console.log(`params============>: ${JSON.stringify(params.id)}`);
         console.log(`type ` + typeof(params['id']));
         this.id = +params['id'];
-        this.editMode = params['id'] != null;
+        this.editMode = params['id'] != null;// if the id is not null, then we are in edit mode
+        console.log(`this.editMode: ${this.editMode}`);
         this.initForm(); // initialize the form
 
 
-        this.recipeInstructionArray = this.recipeService.getRecipeInstructions(this.id); // get the instructions
+        if (this.editMode) {
+          this.recipeInstructionArray = this.recipeService.getRecipeInstructions(this.id); // get the instructions
+        }
         
         // console.log(`this.recipeInstructionArray: ${JSON.stringify(this.recipeInstructionArray)}`);
       }
