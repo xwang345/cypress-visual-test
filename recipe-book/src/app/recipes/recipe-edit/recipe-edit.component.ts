@@ -1,16 +1,17 @@
-import { Component, OnInit, Output, Input } from '@angular/core';
+import { Component, OnInit, Output, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { RecipeService } from '../recipe.service';
 import { Preference } from '../../shared/preference.model';
 import { Recipe } from '../recipe.model';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-recipe-edit',
   templateUrl: './recipe-edit.component.html',
   styleUrl: './recipe-edit.component.css'
 })
-export class RecipeEditComponent implements OnInit{
+export class RecipeEditComponent implements OnInit, OnChanges{
   id: number;
   editMode = false;
   recipeForm: FormGroup
@@ -19,6 +20,8 @@ export class RecipeEditComponent implements OnInit{
   preferences: Preference[]; // array of preferences
   isHovering: Boolean;
   files: File[] = [];
+  recipeInstructionArray: any[];
+  isReOrderable: boolean = false;
 
   constructor(private route: ActivatedRoute, 
               private recipeService: RecipeService,
@@ -30,8 +33,29 @@ export class RecipeEditComponent implements OnInit{
       this.id = +params['id'];
       this.editMode = params['id'] != null;
       this.initForm(); // initialize the form
+      this.recipeInstructionArray = this.recipeService.getRecipeInstructions(this.id);
+      console.log(`this.recipeInstructionArray: ${JSON.stringify(this.recipeInstructionArray)}`);
     });
     this.preferences = this.recipeService.getDietaryPreferences(); // get the preferences
+  }
+
+  ngOnChanges(changes: SimpleChanges){
+    //
+  }
+
+  onReOrderMode() {
+    this.isReOrderable = !this.isReOrderable;
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    console.log(`event.previousIndex: ${event.previousIndex}`);
+    console.log(`event.currentIndex: ${event.currentIndex}`);
+    moveItemInArray(this.recipeInstructionArray, event.previousIndex, event.currentIndex);
+    console.log(`this.recipeInstructionArray: ${JSON.stringify(this.recipeInstructionArray)}`);
+
+    this.recipeService.updateRecipeInstructions(this.id, this.recipeInstructionArray);
+
+    this.recipeForm.get('instructions').setValue(this.recipeInstructionArray);// Update the instruction form
   }
 
   formatLabel(value: number): string {

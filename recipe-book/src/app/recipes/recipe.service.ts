@@ -45,6 +45,15 @@ export class RecipeService{
     return this.recipes.slice();
   }
 
+  getRecipeInstructions(index: number) {
+    return this.recipes[index].instructions.slice();
+  }
+  
+  updateRecipeInstructions(index: number, instructions: any) {
+    this.recipes[index].instructions = instructions;
+    this.recipesChanged.next(this.recipes.slice());
+  }
+
   getDietaryPreferences() {
     return this.dietaryPreferences.slice();
   }
