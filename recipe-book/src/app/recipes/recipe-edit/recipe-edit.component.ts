@@ -5,6 +5,7 @@ import { RecipeService } from '../recipe.service';
 import { Preference } from '../../shared/preference.model';
 import { Recipe } from '../recipe.model';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-recipe-edit',
@@ -20,21 +21,33 @@ export class RecipeEditComponent implements OnInit, OnChanges{
   preferences: Preference[]; // array of preferences
   isHovering: Boolean;
   files: File[] = [];
-  recipeInstructionArray: any[];
+  recipeInstructionArray: any[] = [];
   isReOrderable: boolean = false;
 
   constructor(private route: ActivatedRoute, 
               private recipeService: RecipeService,
-              private router: Router) { }
+              private router: Router,
+              private formBuilder: FormBuilder) { 
+                this.recipeForm = this.formBuilder.group({
+                  instructions: this.formBuilder.array([])
+                });
+              }
 
   ngOnInit() {
     this.route.params
     .subscribe((params: Params) => {
-      this.id = +params['id'];
-      this.editMode = params['id'] != null;
-      this.initForm(); // initialize the form
-      this.recipeInstructionArray = this.recipeService.getRecipeInstructions(this.id);
-      console.log(`this.recipeInstructionArray: ${JSON.stringify(this.recipeInstructionArray)}`);
+      if (params !== undefined) {
+        console.log(`params============>: ${JSON.stringify(params.id)}`);
+        console.log(`type ` + typeof(params['id']));
+        this.id = +params['id'];
+        this.editMode = params['id'] != null;
+        this.initForm(); // initialize the form
+
+
+        this.recipeInstructionArray = this.recipeService.getRecipeInstructions(this.id); // get the instructions
+        
+        // console.log(`this.recipeInstructionArray: ${JSON.stringify(this.recipeInstructionArray)}`);
+      }
     });
     this.preferences = this.recipeService.getDietaryPreferences(); // get the preferences
   }
@@ -48,14 +61,9 @@ export class RecipeEditComponent implements OnInit, OnChanges{
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    console.log(`event.previousIndex: ${event.previousIndex}`);
-    console.log(`event.currentIndex: ${event.currentIndex}`);
     moveItemInArray(this.recipeInstructionArray, event.previousIndex, event.currentIndex);
-    console.log(`this.recipeInstructionArray: ${JSON.stringify(this.recipeInstructionArray)}`);
-
     this.recipeService.updateRecipeInstructions(this.id, this.recipeInstructionArray);
-
-    this.recipeForm.get('instructions').setValue(this.recipeInstructionArray);// Update the instruction form
+    this.recipeForm.get('instructions').setValue(this.recipeInstructionArray);
   }
 
   formatLabel(value: number): string {
@@ -137,20 +145,18 @@ export class RecipeEditComponent implements OnInit, OnChanges{
   }
 
   onAddInstruction() { 
-    (<FormArray>this.recipeForm.get('instructions')).push( // cast the form group to a form array
-      new FormGroup({
-        'instDescription': new FormControl(null, Validators.required),
-        'insImagePath': new FormControl(null, Validators.required)
-      })
-    );
+    const newInstruction = new FormGroup({
+      'instDescription': new FormControl(null, Validators.maxLength(19999)),
+      'insImagePath': new FormControl(null, Validators.required)
+    });
+
+    (<FormArray>this.recipeForm.get('instructions')).push(newInstruction); // push a new form group into the form array
+    this.recipeInstructionArray.push(newInstruction.value); // push the new instruction into the recipeInstructionArray
+    this.recipeForm.get('dietaryPreferences').setValue(this.recipeInstructionArray); // Update the instruction form
   }
 
   onDeleteIngredient(index: number) { // delete an ingredient 
     (<FormArray>this.recipeForm.get('ingredients')).removeAt(index);
-  }
-
-  onDeleteInstruction(index: number) { // delete an instruction 
-    (<FormArray>this.recipeForm.get('instructions')).removeAt(index);
   }
 
   public initForm() {
@@ -183,6 +189,7 @@ export class RecipeEditComponent implements OnInit, OnChanges{
         }
       }
 
+      // if recipe has instructions
       if(recipe['instructions']) {
         for(let instruction of recipe.instructions) {
           recipeInstructions.push( // push a new form group into the form array

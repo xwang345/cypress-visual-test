@@ -45,8 +45,14 @@ export class RecipeService{
     return this.recipes.slice();
   }
 
-  getRecipeInstructions(index: number) {
-    return this.recipes[index].instructions.slice();
+  getRecipeInstructions(index: any) {
+    console.log(`typeof index: ${index}`);
+    console.log(`typeof index: ${Number.NaN}`);
+    if (index === Number.NaN) {
+      return null;
+    } else {
+      return this.recipes[index].instructions.slice();
+    }   
   }
   
   updateRecipeInstructions(index: number, instructions: any) {

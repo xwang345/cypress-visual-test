@@ -152,7 +152,7 @@
                 color="primary" 
                 (click)="onReOrderMode()"
                 [disabled]="$any(recipeForm.get('instructions')).controls.length < 2"
-                style="margin-left: 20px;">{{ isReOrderable ? 'Done' : 'Re-oder' }}</button>
+                style="margin-left: 20px;">{{ isReOrderable ? 'Click me when reordering is done' : 'Re-oder' }}</button>
               </div>
             </div>
           </div>

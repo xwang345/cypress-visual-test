@@ -41,10 +41,10 @@ mat-option {
 .example-list {
   /* width: 500px; */
   max-width: 100%;
-  border: solid 1px #ccc;
+  border: solid 1px #848484;
   min-height: 60px;
   display: block;
-  background: rgb(62, 62, 62);
+  background: #5A5A5A;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -59,7 +59,7 @@ mat-option {
   justify-content: space-between;
   box-sizing: border-box;
   cursor: move;
-  background: #707070;
+  background: #5a5a5a;
   font-size: 14px;
 }
 
