@@ -1,0 +1,57 @@
+<div class="row">
+  <div class="col-md-5">
+    <h1 style="color: aliceblue;">Coming Soon! Under Development...</h1>
+    <mat-form-field class="example-full-width">
+      <mat-label>Search recipes from the edamam</mat-label>
+      <input matInput type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchQuery" (ngModelChange)="searchRecipes()">
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <mat-label>Find your recipes</mat-label>
+      <input matInput type="text" placeholder="" [(ngModel)]="sortRecipe">
+    </mat-form-field>
+    <button mat-button (click)="onSaveRecipe()">Save Recipe</button>
+    <div class="grid-container">
+      <div *ngFor="let recipe of edamamRecipes | filter: sortRecipe" class="grid-item">
+        <mat-card style="color: aliceblue; border-radius: 30px;">
+          <mat-card-content>
+            <img [src]="recipe.image" alt="{{ recipe.label }}">
+            <h2>{{ recipe.label }}</h2>
+            <!-- <p>Source: {{ recipe.source }}</p>
+            <p>URL: <a [href]="recipe.url" target="_blank">View Recipe</a></p> -->
+            <!-- <p>Ingredients:</p>
+            <ul>
+              <li *ngFor="let ingredient of recipe.ingredientLines">{{ ingredient }}</li>
+            </ul> -->
+            <p>Calories: {{ recipe.calories | number:'1.0-2' }}</p>
+            <p>Serve: {{ recipe.yield }} people</p>
+            <p>Health Labels:</p>
+            <mat-chip-listbox *ngFor="let healthLabel of recipe.healthLabels.slice(0, 5)" style="display: inline-block; margin-right: 3px; color: white;">
+              <mat-chip>{{ healthLabel }}</mat-chip>
+            </mat-chip-listbox>
+            <div *ngIf="recipe.dietLabels.length !==0">
+              <p>Diet Labels:</p>
+              <mat-chip-listbox  *ngFor="let dietLabel of recipe.dietLabels">
+                <mat-chip>{{ dietLabel }}</mat-chip>
+              </mat-chip-listbox>
+            </div>
+            <div>
+              <p>Meal Type:</p>
+              <mat-chip-listbox *ngFor="let mealType of recipe.mealType">
+                <mat-chip>{{ mealType }}</mat-chip>
+              </mat-chip-listbox>
+            </div>
+            <p *ngIf="recipe.totalTime !== 0">Recipe Total Time: {{ recipe.totalTime }} {{ recipe.totalTime === 1 ? 'minute' : 'minutes' }} </p>
+            <p>Recipe Total Weight: {{ recipe.totalWeight | number:'1.0-2'  }} g</p>
+            <!-- <p>Recipe Total Nutrients:</p>
+            <ul>
+              <li *ngFor="let nutrient of recipe.totalNutrients">{{ nutrient.label }}: {{ nutrient.quantity }} {{ nutrient.unit }}</li>
+            </ul> -->
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-7">
+    <router-outlet></router-outlet>
+  </div>
+</div>

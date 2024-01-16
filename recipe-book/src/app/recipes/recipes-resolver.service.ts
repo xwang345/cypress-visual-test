@@ -11,7 +11,7 @@ export class RecipesResolverService {
       private dataStorageService: DataStorageService, 
       private recipeService: RecipeService,
       private recipeSortService: RecipeSortService) { 
-        this.recipeSortService.recipesChanged.subscribe((recipes: Recipe[]) => {
+        this.recipeSortService.recipesChanged.subscribe((recipes: Recipe[]) => { // subscribe to the recipesChanged Subject
           this.recipeService.setRecipes(recipes);
         });
       }

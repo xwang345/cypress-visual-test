@@ -30,6 +30,7 @@ export class RecipeItemComponent implements OnInit, OnChanges, OnDestroy {
       this.recipeArray = recipes;
     });
     this.recipeArray = this.recipeService.getRecipes();
+    console.log('recipeArray: ' + JSON.stringify(this.recipeArray));
   }
 
   /**

@@ -6,6 +6,7 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
 import { DropdownDirective } from './dropdown.directive';
 import { PlaceholderDirective } from './placeholder/placeholder.directive';
 import { DropzoneDirective } from './dropzone.directive';
+import { FilterPipe } from './filterPipe.directive';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { DropzoneDirective } from './dropzone.directive';
     LoadingSpinnerComponent,
     DropdownDirective,
     PlaceholderDirective,
-    DropzoneDirective
+    DropzoneDirective,
+    FilterPipe
   ],
   imports: [CommonModule],
   exports: [
@@ -22,7 +24,8 @@ import { DropzoneDirective } from './dropzone.directive';
     DropdownDirective,
     PlaceholderDirective,
     CommonModule,
-    DropzoneDirective
+    DropzoneDirective,
+    FilterPipe
   ]
 })
 export class SharedModule {

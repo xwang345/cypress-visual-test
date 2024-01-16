@@ -18,12 +18,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
 import { SettingPageModule } from './setting-page/setting-page.model';
-import { NZ_I18N } from 'ng-zorro-antd/i18n';
-import { en_US } from 'ng-zorro-antd/i18n';
-import { registerLocaleData } from '@angular/common';
-import en from '@angular/common/locales/en';
-
-registerLocaleData(en);
+import { EdamamRecipesModule } from './third-party-recipe/edamamRecipes.module';
+import { EdamamRecipeRoutingModule } from './third-party-recipe/edamamRecipe-routing';
 
 @NgModule({
   declarations: [
@@ -39,6 +35,8 @@ registerLocaleData(en);
     RecipesRoutingModule,
     ShoppingListModule,
     RecipesModule,
+    EdamamRecipesModule,
+    EdamamRecipeRoutingModule,
     SettingPageModule,
     SharedModule,
     CoreModule,
@@ -51,9 +49,6 @@ registerLocaleData(en);
     MatMenuModule,
     MatListModule
   ],
-  bootstrap: [AppComponent],
-  providers: [
-    { provide: NZ_I18N, useValue: en_US }
-  ]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
