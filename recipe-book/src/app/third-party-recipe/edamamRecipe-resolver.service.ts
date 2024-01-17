@@ -14,11 +14,11 @@ export class EdamamRecipeResolverService {
       const edamamRecipes = this.edamamRecipeService.getEdamamRecipes();
 
       if (edamamRecipes.length === 0) {
-        this.dataStorageService.fetchRecipesFromEdamam('chicken').forEach(edamamRecipes => {
-          // console.log('edamamRecipes: ' + JSON.stringify(edamamRecipes));
-        });
+        // this.dataStorageService.fetchRecipesFromEdamam(route.params.label).forEach(edamamRecipes => {
+        //   // console.log('edamamRecipes: ' + JSON.stringify(edamamRecipes));
+        // });
 
-        return this.dataStorageService.fetchRecipesFromEdamam('chicken');
+        return this.dataStorageService.fetchRecipesFromEdamam(route.params.label);
       } else {
         return edamamRecipes;
       }

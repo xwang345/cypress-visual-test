@@ -45,8 +45,10 @@ export class DataStorageService {
   fetchRecipesFromEdamam(ingredient: string) {
     const appId = 'cfe50388'; // replace with your App ID
     const appKey = 'f24c2a0fb9f9225b0bbd32da0219c554'; // replace with your App Key
+    const from = 0;
+    const to = 50;
 
-    return this.http.get(`https://api.edamam.com/search?q=${ingredient}&app_id=${appId}&app_key=${appKey}`)
+    return this.http.get(`https://api.edamam.com/search?q=${ingredient}&app_id=${appId}&app_key=${appKey}&from=${from}&to=${to}`)
       .pipe(map(recipes => {
         return recipes['hits'].map(recipe => {
           console.log(`DataStorageService.fetchRecipesFromEdamam() recipe: ${JSON.stringify(recipe.recipe)}`);

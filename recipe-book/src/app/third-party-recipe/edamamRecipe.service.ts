@@ -11,7 +11,7 @@ export class EdamamRecipeService{
   constructor() {}
 
   setEdamamRecipes(edamamRecipes: EdamamRecipe[]){ // set recipes
-    // console.log(`EdamamRecipeService.setEdamamRecipes() edamamRecipes: ${JSON.stringify(edamamRecipes)}`);
+    console.log(`EdamamRecipeService.setEdamamRecipes() edamamRecipes: ${JSON.stringify(edamamRecipes)}`);
     this.edamamRecipes = edamamRecipes;
     this.edamamRecipesChanged.next(this.edamamRecipes.slice());
   }
@@ -23,4 +23,14 @@ export class EdamamRecipeService{
   getEdamamRecipe(index: number) {
     return this.edamamRecipes[index];
   }
-}
+
+  getEdamamRecipeByLabel(label: string) {
+    let selectedEdamamRecipes = this.edamamRecipes.find(edamamRecipe => {
+      if (edamamRecipe.label.toLocaleLowerCase() === label.toLocaleLowerCase()) {
+        return edamamRecipe;
+      }
+    });
+
+    return selectedEdamamRecipes;
+  }
+} 

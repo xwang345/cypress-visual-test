@@ -21,6 +21,7 @@ import { SettingPageModule } from './setting-page/setting-page.model';
 import { EdamamRecipesModule } from './third-party-recipe/edamamRecipes.module';
 import { EdamamRecipeRoutingModule } from './third-party-recipe/edamamRecipe-routing';
 
+
 @NgModule({
   declarations: [
     AppComponent,

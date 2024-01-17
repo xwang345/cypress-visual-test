@@ -26,7 +26,6 @@
     "@angular/ssr": "^17.0.7",
     "bootstrap": "^3.4.1",
     "express": "^4.18.2",
-    "ng-zorro-antd": "^17.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"

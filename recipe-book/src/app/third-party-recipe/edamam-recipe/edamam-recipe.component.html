@@ -10,18 +10,23 @@
       <input matInput type="text" placeholder="" [(ngModel)]="sortRecipe">
     </mat-form-field>
     <button mat-button (click)="onSaveRecipe()">Save Recipe</button>
+    <br />
+    <br />
+    <mat-paginator [length]="edamamRecipes.length"
+              [pageSize]="defaultPageSize"
+              [pageSizeOptions]="[5, 10, 25, edamamRecipes.length]"
+              [disabled]="findUserRecipes()"
+              (page)="pageChanged($event)"
+              aria-label="Select page">
+    </mat-paginator>
+    <br />
+    <br />
     <div class="grid-container">
-      <div *ngFor="let recipe of edamamRecipes | filter: sortRecipe" class="grid-item">
+      <div *ngFor="let recipe of displayedRecipes | filter: sortRecipe" class="grid-item">
         <mat-card style="color: aliceblue; border-radius: 30px;">
           <mat-card-content>
             <img [src]="recipe.image" alt="{{ recipe.label }}">
             <h2>{{ recipe.label }}</h2>
-            <!-- <p>Source: {{ recipe.source }}</p>
-            <p>URL: <a [href]="recipe.url" target="_blank">View Recipe</a></p> -->
-            <!-- <p>Ingredients:</p>
-            <ul>
-              <li *ngFor="let ingredient of recipe.ingredientLines">{{ ingredient }}</li>
-            </ul> -->
             <p>Calories: {{ recipe.calories | number:'1.0-2' }}</p>
             <p>Serve: {{ recipe.yield }} people</p>
             <p>Health Labels:</p>
@@ -40,12 +45,16 @@
                 <mat-chip>{{ mealType }}</mat-chip>
               </mat-chip-listbox>
             </div>
-            <p *ngIf="recipe.totalTime !== 0">Recipe Total Time: {{ recipe.totalTime }} {{ recipe.totalTime === 1 ? 'minute' : 'minutes' }} </p>
+            <p *ngIf="recipe.totalTime !== 0">
+              Recipe Total Time: {{ recipe.totalTime }} {{ recipe.totalTime === 1 ? 'minute' : 'minutes' }} 
+            </p>
             <p>Recipe Total Weight: {{ recipe.totalWeight | number:'1.0-2'  }} g</p>
-            <!-- <p>Recipe Total Nutrients:</p>
-            <ul>
-              <li *ngFor="let nutrient of recipe.totalNutrients">{{ nutrient.label }}: {{ nutrient.quantity }} {{ nutrient.unit }}</li>
-            </ul> -->
+            <button 
+            mat-raised-button 
+            color="primary"
+            (click)="navigateToRecipeDetail(recipe)"
+            style="border-radius: 25px;"
+            >see more for {{ recipe.label }}</button>
           </mat-card-content>
         </mat-card>
       </div>
