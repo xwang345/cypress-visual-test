@@ -34,6 +34,5 @@ export class EdamamTotalNutrient {
         public TOCPHA: EdamamNutrient,
         public VITK1: EdamamNutrient,
         public WATER: EdamamNutrient) {
-
     }
 }

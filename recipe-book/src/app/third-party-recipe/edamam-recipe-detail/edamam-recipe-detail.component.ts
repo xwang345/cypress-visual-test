@@ -7,6 +7,10 @@ import { EdamamRecipe } from '../edamamRecipe.model';
 import { EdamamIngredient } from '../../shared/edamamDataModel/edamamIngredient.model';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import { EdamamTotalNutrient } from '../../shared/edamamDataModel/edamamTotalNutrients.model';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
 
 @Component({
   selector: 'edamam-recipe-detail',
@@ -54,6 +58,34 @@ export class EdamamRecipeDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  generatePDF() {
+  let docDefinition = {
+    content: [
+      {text: `${this.selectedEdamamRecipes.label} Recipe: `, style: 'header'},
+      {text: '\n', style: 'header'},
+      ...this.selectedEdamamRecipes.ingredients.map(ingredient => ({
+        stack: [
+          {text: `${ingredient.text}`, style: 'header'},
+          {text: `Quantity: ${ingredient.quantity}`, style: 'header'},
+          {text: `Measure: ${ingredient.measure}`, style: 'header'},
+          {text: `Weight: ${ingredient.weight}`, style: 'header'},
+          {text: `Food Category: ${ingredient.foodCategory}`, style: 'header'},
+          {text: '\n', style: 'header'},
+        ]
+        })
+      ),
+      {text: '\n\n', style: 'header'},
+      {text: 'Nutrition Facts', style: 'header'},
+      {text: '\n', style: 'header'},
+      ...Object.entries(this.selectedEdamamRecipes.totalNutrients).map(([key, value]) => ({
+        text: `${key}. ${value.label}: ${parseFloat(value.quantity).toFixed(2)} ${value.unit}`
+        })
+      ),
+    ]
+  }
+
+  pdfMake.createPdf(docDefinition).open();
+}
 
   ngOnDestroy() {
     this.subscription.unsubscribe();

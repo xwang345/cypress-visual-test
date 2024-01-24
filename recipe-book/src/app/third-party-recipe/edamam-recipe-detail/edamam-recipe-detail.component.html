@@ -7,6 +7,12 @@
       </mat-card-content>
       <mat-card-content>
         <h2>{{ selectedEdamamRecipes.label }}</h2>
+        <button  mat-fab extended color="primary" (click)="generatePDF()">
+          <mat-icon>favorite</mat-icon>
+          Generate PDF
+        </button>
+        <br />
+        <br />
         <p>Calories: {{ selectedEdamamRecipes.calories | number:'1.0-2' }}</p>
         <p>Serve: {{ selectedEdamamRecipes.yield }} people</p>
         <h2>Health Labels:</h2>
