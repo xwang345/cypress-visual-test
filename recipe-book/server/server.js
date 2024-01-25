@@ -54,7 +54,7 @@ async function fetchAllData(tableName) {
  * @returns {Promise<void>} - A promise that resolves when all images have been inserted.
  */
 const insertImages = async (images, dbTableName) => {
-  const client = await pool.connect();
+  const client = await pool.connect(); // Create a PostgreSQL client/connection
   try {
     const insertQuery = `INSERT INTO ${dbTableName} (foodid, image) VALUES ($1, $2)`;
     const insertPromises = images.map(async ({ imageUrl, imageId }) => {
@@ -62,7 +62,9 @@ const insertImages = async (images, dbTableName) => {
         await client.query('BEGIN'); // Start transaction
 
         if (imageUrl) {
-          const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+          const response = await axios.get(imageUrl, {
+            responseType: 'arraybuffer',
+          });
           const imageBuffer = response.data;
           await client.query(insertQuery, [imageId, imageBuffer]);
         } else {
@@ -70,9 +72,16 @@ const insertImages = async (images, dbTableName) => {
         }
 
         await client.query('COMMIT'); // Commit transaction
-        console.log(chalk.green(`Image ${imageUrl ? imageUrl : 'with ID ' + imageId} has been inserted.`));
+        console.log(
+          chalk.green(
+            `Image ${imageUrl ? imageUrl : 'with ID ' + imageId} has been inserted.`
+          )
+        );
       } catch (error) {
-        console.error(`Error inserting image ${imageUrl ? imageUrl : 'with ID ' + imageId}:`, error);
+        console.error(
+          `Error inserting image ${imageUrl ? imageUrl : 'with ID ' + imageId}:`,
+          error
+        );
       }
     });
 
@@ -107,27 +116,11 @@ const insertRecipesIntoDB = async (recipesData) => {
       )
     );
     for (const hit of recipesData.hits) {
-      console.log(chalk.blue(`Inserting ${hit.recipe.label} into the database...`));
+      console.log(
+        chalk.blue(`Inserting ${hit.recipe.label} into the database...`)
+      );
 
       const recipe = hit.recipe;
-
-      // // Check if ingredient image already exists
-      // let foodImageCheckQuery = 'SELECT foodid FROM ingredient_image WHERE foodid = $1;';
-      // let recipeImageCheckRes = await client.query(foodImageCheckQuery, [recipe.foodId]);
-      // let imagesToInsert = {
-      //   imageUrl: ingredient.image,
-      //   imageId: ingredient.foodId
-      // };
-
-      // console.log(chalk.blue(`Inserting ${JSON.stringify(recipeImageCheckRes.rows)} into the database...`));
-
-      // if (recipeImageCheckRes.rows.length === 0) {
-      //   // Insert ingredient image into database
-      //   await insertImages([imagesToInsert], 'ingredient_image');
-      // } else {
-      //   console.log(chalk.red(`Image ${JSON.stringify(recipeImageCheckRes.rows)}} already exists in the database.`));
-      // }
-
       let labelCheckQuery = 'SELECT id FROM recipes WHERE label = $1;';
       let labelCheckRes = await client.query(labelCheckQuery, [recipe.label]);
 
@@ -149,25 +142,59 @@ const insertRecipesIntoDB = async (recipesData) => {
         const recipeRes = await client.query(recipeInsertQuery, recipeValues);
         const recipeId = recipeRes.rows[0].id;
 
+        let imageId;
+
+        const foodIdCheckQuery = `SELECT foodid FROM images WHERE foodid = $1;`;
+        const foodIdCheckRes = await client.query(foodIdCheckQuery, [recipeId]);
+
+        if (foodIdCheckRes.rows.length === 0) {
+          const imagesToInsertQuery = `INSERT INTO images ( image) VALUES ($1) RETURNING foodid ;`;
+          const response = await axios.get(recipe.image, {
+            responseType: 'arraybuffer',
+          });
+          const imageBuffer = response.data;
+          const imagesInsertRes = await client.query(imagesToInsertQuery, [
+            imageBuffer,
+          ]);
+
+          imageId = imagesInsertRes.rows[0].foodid;
+        } else {
+          imageId = foodIdCheckRes.rows[0].foodid;
+        }
+
+        const recipeImageInsertQuery = `INSERT INTO recipe_image (recipe_id, image_id) VALUES ($1, $2);`;
+        await client.query(recipeImageInsertQuery, [recipeId, imageId]);
+
         //================================================================================================
 
         // Insert into 'ingredients' table
         for (const ingredient of recipe.ingredients) {
-           // Check if ingredient image already exists
-          let recipeImageCheckQuery = 'SELECT foodid FROM ingredient_image WHERE foodid = $1;';
-          let recipeImageCheckRes = await client.query(recipeImageCheckQuery, [ingredient.foodId]);
+          // Check if ingredient image already exists
+          let recipeImageCheckQuery =
+            'SELECT foodid FROM ingredient_image WHERE foodid = $1;';
+          let recipeImageCheckRes = await client.query(recipeImageCheckQuery, [
+            ingredient.foodId,
+          ]);
           let imagesToInsert = {
             imageUrl: ingredient.image,
-            imageId: ingredient.foodId
+            imageId: ingredient.foodId,
           };
 
-          console.log(chalk.blue(`Inserting ${JSON.stringify(recipeImageCheckRes.rows)} into the database...`));
+          console.log(
+            chalk.blue(
+              `Inserting ${JSON.stringify(recipeImageCheckRes.rows)} into the database...`
+            )
+          );
 
           if (recipeImageCheckRes.rows.length === 0) {
             // Insert ingredient image into database
             await insertImages([imagesToInsert], 'ingredient_image');
           } else {
-            console.log(chalk.red(`Image ${JSON.stringify(recipeImageCheckRes.rows)}} already exists in the database.`));
+            console.log(
+              chalk.red(
+                `Image ${JSON.stringify(recipeImageCheckRes.rows)}} already exists in the database.`
+              )
+            );
           }
 
           const ingredientInsertQuery = `
@@ -183,7 +210,7 @@ const insertRecipesIntoDB = async (recipesData) => {
             ingredient.weight,
             ingredient.foodCategory,
             ingredient.foodId,
-            ingredient.image
+            ingredient.image,
           ];
 
           await client.query(ingredientInsertQuery, ingredientValues);
@@ -320,9 +347,7 @@ const insertRecipesIntoDB = async (recipesData) => {
           }
         } else {
           console.error(
-            chalk.red(
-              `${recipe.label} recipe.dishType is not an array`
-            )
+            chalk.red(`${recipe.label} recipe.dishType is not an array`)
           );
         }
 
@@ -369,10 +394,8 @@ const insertRecipesIntoDB = async (recipesData) => {
             'INSERT INTO recipe_cuisineType (recipe_id, cuisineType_id) VALUES ($1, $2);';
           await client.query(recipeLabelLinkInsertQuery, [recipeId, labelId]);
         }
-        console.log(
-            chalk.green(`Add ${recipe.label} to the database.`)
-          );
-          continue;
+        console.log(chalk.green(`Add ${recipe.label} to the database.`));
+        continue;
       } else {
         console.log(
           chalk.red(`Recipe already exists in the database: ${recipe.label}`)
@@ -402,7 +425,6 @@ app.get('/recipes/:ingredient', async (req, res) => {
     if (recipesData && recipesData.hits.length > 0) {
       await insertRecipesIntoDB(recipesData);
       res.status(200).send(result.rows);
-
     } else {
       res.status(404).send(`No recipes found for ${ingredient}.`);
     }
@@ -420,8 +442,22 @@ app.get('/recipes/label/:label', async (req, res) => {
   console.log(chalk.blue(label));
 
   try {
-    const query = `SELECT r.id, r.label, r.image, r.totaltime, r.totaltime, string_agg(i.text, ', ') AS ingredients_list, string_agg(i.image, ', ') AS ingredients_image FROM recipes r LEFT JOIN ingredients i ON r.id = i.recipe_id WHERE r.label ILIKE $1 GROUP BY r.id;
-        ;`;
+    const query = `
+    SELECT 
+    r.id, r.label, r.image, r.source, r.url, r.shareas, r.yield, r.totaltime,
+    string_agg(DISTINCT i.text, ', ') AS ingredients_list,
+    string_agg(DISTINCT i.foodid, ', ') AS ingredients_foodid,
+    string_agg(DISTINCT nn.nutrient_name, ', ') AS nutrient_name,
+    string_agg(DISTINCT n.label || ' ' || n.quantity::text || ' ' || n.unit::text, ', ') AS nutrient_quantity 
+    FROM recipes r 
+    LEFT JOIN ingredients i ON r.id = i.recipe_id 
+    LEFT JOIN recipe_image ri ON r.id = ri.recipe_id
+    LEFT JOIN images im ON ri.image_id = im.foodid
+    LEFT JOIN totalnutrients n ON r.id = n.recipe_id
+    LEFT JOIN nutrientnames nn ON nn.id = n.nutrient_id
+    WHERE r.label ILIKE $1
+    GROUP BY r.id;
+      `;
     const values = [`%${label}%`]; // '%' wildcards allow for partial matching
     const queryResult = await pool.query(query, values);
     if (queryResult.rows.length > 0) {
