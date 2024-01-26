@@ -3,9 +3,6 @@ const { Pool } = require('pg');
 const express = require('express');
 const bodyParser = require('body-parser');
 const chalk = require('chalk');
-const { Sequelize, DataTypes } = require('sequelize');
-const dataService = require('./data-service.js');
-
 
 // Initialize Express
 const app = express();
@@ -18,19 +15,6 @@ const pool = new Pool({
   database: 'RecipeDB',
   password: 'Xlxc101302#',
   port: 5432,
-});
-
-// PostgreSQL connection configuration
-const sequelize = new Sequelize('RecipeDB', 'postgres', 'Xlxc101302#', {
-  host: 'localhost',
-  dialect: 'postgres',
-  port: 5432,
-});
-
-sequelize.authenticate().then(() => {
-  console.log(chalk.green('Connection has been established successfully.'));
-}).catch((err) => {
-  console.log(chalk.red(`Unable to connect to the database: ${err}`));
 });
 
 // Edamam API configuration
@@ -62,8 +46,6 @@ async function fetchAllData(tableName) {
     client.release();
   }
 }
-
-
 
 /**
  * Inserts images into the specified database table.
@@ -498,13 +480,4 @@ app.listen(port, () => {
   console.log(chalk.yellow('===                                      ==='));
   console.log(chalk.yellow('============================================'));
   console.log(`Server running on port ${port}`);
-  return new Promise((res, req) => {
-    dataService.initialize().then(() => {
-      console.log(chalk.bgGreen("============================================"));
-      console.log(chalk.bgGreen("Now can connect to the database       !!!!!!"));
-      console.log(chalk.bgGreen("============================================"));
-    }).catch((err) => {
-      console.log(chalk.bgRed(err));
-    });
-  });
 });
