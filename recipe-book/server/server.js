@@ -3,7 +3,6 @@ const { Pool } = require('pg');
 const express = require('express');
 const bodyParser = require('body-parser');
 const chalk = require('chalk');
-const { Sequelize, DataTypes } = require('sequelize');
 const dataService = require('./data-service.js');
 
 
@@ -12,25 +11,24 @@ const app = express();
 const port = 3000;
 
 // PostgreSQL connection configuration
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'RecipeDB',
-  password: 'Xlxc101302#',
-  port: 5432,
-});
+// const pool = new Pool({
+//   user: 'postgres',
+//   host: 'localhost',
+//   database: 'RecipeDB',
+//   password: 'Xlxc101302#',
+//   port: 5432,
+// });
 
-// PostgreSQL connection configuration
-const sequelize = new Sequelize('RecipeDB', 'postgres', 'Xlxc101302#', {
-  host: 'localhost',
-  dialect: 'postgres',
+//render connection configuration
+const poolRender = new Pool({
+  user: 'xwang345',
+  host: 'dpg-cmp4bgmn7f5s73dblc20-a.oregon-postgres.render.com',
+  database: 'recipedb_q8ko',
+  password: 'sXjsgyEmDEGga4IVc4G7SFgnBZmwp3I8',
   port: 5432,
-});
-
-sequelize.authenticate().then(() => {
-  console.log(chalk.green('Connection has been established successfully.'));
-}).catch((err) => {
-  console.log(chalk.red(`Unable to connect to the database: ${err}`));
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // Edamam API configuration
@@ -38,7 +36,7 @@ const appId = 'cfe50388'; // Replace with your App ID
 const appKey = 'f24c2a0fb9f9225b0bbd32da0219c554'; // Replace with your App Key
 // const ingredient = 'orange'; // Example ingredient
 const from = 0; // Pagination start
-const to = 50; // Pagination end
+const to = 1; // Pagination end
 
 let result;
 
@@ -51,7 +49,7 @@ app.use(bodyParser.json());
 app.use(express.json()); // Used to parse JSON bodies
 
 async function fetchAllData(tableName) {
-  const client = await pool.connect();
+  const client = await poolRender.connect();
   try {
     const result = await client.query(`SELECT * FROM ${tableName};`);
     return result.rows; // 'rows' contains the query results
@@ -63,8 +61,6 @@ async function fetchAllData(tableName) {
   }
 }
 
-
-
 /**
  * Inserts images into the specified database table.
  * @param {Array<Object>} images - The array of images to be inserted.
@@ -72,7 +68,7 @@ async function fetchAllData(tableName) {
  * @returns {Promise<void>} - A promise that resolves when all images have been inserted.
  */
 const insertImages = async (images, dbTableName) => {
-  const client = await pool.connect(); // Create a PostgreSQL client/connection
+  const client = await poolRender.connect(); // Create a PostgreSQL client/connection
   try {
     const insertQuery = `INSERT INTO ${dbTableName} (foodid, image) VALUES ($1, $2)`;
     const insertPromises = images.map(async ({ imageUrl, imageId }) => {
@@ -123,16 +119,11 @@ const fetchRecipes = async (ingredient) => {
 };
 
 const insertRecipesIntoDB = async (recipesData) => {
-  const client = await pool.connect();
+  const client = await poolRender.connect();
 
   try {
     await client.query('BEGIN'); // Start transaction
 
-    console.log(
-      chalk.cyan(
-        `Inserting ${recipesData.hits.length} recipes into the database...`
-      )
-    );
     for (const hit of recipesData.hits) {
       console.log(
         chalk.blue(`Inserting ${hit.recipe.label} into the database...`)
@@ -197,12 +188,6 @@ const insertRecipesIntoDB = async (recipesData) => {
             imageUrl: ingredient.image,
             imageId: ingredient.foodId,
           };
-
-          console.log(
-            chalk.blue(
-              `Inserting ${JSON.stringify(recipeImageCheckRes.rows)} into the database...`
-            )
-          );
 
           if (recipeImageCheckRes.rows.length === 0) {
             // Insert ingredient image into database
@@ -345,12 +330,12 @@ const insertRecipesIntoDB = async (recipesData) => {
           // Inserting dishtype and their relations follows a similar pattern
           for (const label of recipe.dishType) {
             let labelId;
-            const labelCheckQuery = 'SELECT id FROM dishType WHERE name = $1;';
+            const labelCheckQuery = 'SELECT id FROM dishTypes WHERE name = $1;';
             const labelCheckRes = await client.query(labelCheckQuery, [label]);
 
             if (labelCheckRes.rows.length === 0) {
               const labelInsertQuery =
-                'INSERT INTO dishType (name) VALUES ($1) RETURNING id;';
+                'INSERT INTO dishTypes (name) VALUES ($1) RETURNING id;';
               const labelInsertRes = await client.query(labelInsertQuery, [
                 label,
               ]);
@@ -477,7 +462,7 @@ app.get('/recipes/label/:label', async (req, res) => {
     GROUP BY r.id;
       `;
     const values = [`%${label}%`]; // '%' wildcards allow for partial matching
-    const queryResult = await pool.query(query, values);
+    const queryResult = await poolRender.query(query, values);
     if (queryResult.rows.length > 0) {
       res.setHeader('Content-Type', 'application/json');
       res.json(queryResult.rows);
@@ -497,7 +482,7 @@ app.listen(port, () => {
   console.log(chalk.yellow(`== Express http server listening on: ${port} ==`));
   console.log(chalk.yellow('===                                      ==='));
   console.log(chalk.yellow('============================================'));
-  console.log(`Server running on port ${port}`);
+  console.log(chalk.greenBright(`Server running on port ${port}`));
   return new Promise((res, req) => {
     dataService.initialize().then(() => {
       console.log(chalk.bgGreen("============================================"));

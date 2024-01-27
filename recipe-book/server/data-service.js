@@ -35,20 +35,20 @@ const recipes = sequelize.define('recipes', {
       autoIncrement: true
   },
   label: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT('long'),
       allowNull: false
   },
   image: {
-      type: DataTypes.STRING
+      type: DataTypes.TEXT('long')
   },
   source: {
-      type: DataTypes.STRING
+      type: DataTypes.TEXT('long')
   },
   url: {
-      type: DataTypes.STRING
+      type: DataTypes.TEXT('long')
   },
   shareas: {
-      type: DataTypes.STRING
+      type: DataTypes.TEXT('long')
   },
   yield: {
       type: DataTypes.FLOAT
@@ -64,7 +64,7 @@ const recipes = sequelize.define('recipes', {
 // Define the ingredient_image model
 const ingredient_image = sequelize.define('ingredient_image', {
   foodid: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT('long'),
       primaryKey: true,
       allowNull: false
   },
@@ -84,7 +84,7 @@ const cautions = sequelize.define('cautions', {
       autoIncrement: true
   },
   name: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT('long'),
       allowNull: false
   }
 }, {
@@ -94,7 +94,7 @@ const cautions = sequelize.define('cautions', {
 
 // Define the recipe_cautions model
 const recipe_cautions = sequelize.define('recipe_cautions', {
-  id: {
+  recipe_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
@@ -104,7 +104,7 @@ const recipe_cautions = sequelize.define('recipe_cautions', {
           key: 'id'
       }
   },
-  caution: {
+  caution_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       allowNull: false,
@@ -126,7 +126,7 @@ const cuisinetype = sequelize.define('cuisinetype', {
       autoIncrement: true
   },
   name: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT('long'),
       allowNull: false
   }
 }, {
@@ -145,7 +145,7 @@ const recipe_cuisinetype = sequelize.define('recipe_cuisinetype', {
           key: 'id'
       }
   },
-  cuisinetype: {
+  cuisinetype_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -175,7 +175,7 @@ const ingredients = sequelize.define('ingredients', {
       }
   },
   text: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT('long'),
       allowNull: false
   },
   quantity: {
@@ -183,19 +183,19 @@ const ingredients = sequelize.define('ingredients', {
       allowNull: false
   },
   measure: {
-      type: DataTypes.STRING
+      type: DataTypes.TEXT('long')
   },
   food: {
-      type: DataTypes.STRING
+      type: DataTypes.TEXT('long')
   },
   weight: {
       type: DataTypes.REAL
   },
   foodcategory: {
-      type: DataTypes.STRING
+      type: DataTypes.TEXT('long')
   },
   foodid: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT('long'),
       references: {
           model: ingredient_image,
           key: 'foodid'
@@ -218,7 +218,7 @@ const dietlabels = sequelize.define('dietlabels', {
       autoIncrement: true
   },
   name: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT('long'),
       allowNull: false
   }
 }, {
@@ -259,7 +259,7 @@ const healthlabels = sequelize.define('healthlabels', {
       autoIncrement: true
   },
   name: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT('long'),
       allowNull: false
   }
 }, {
@@ -297,6 +297,7 @@ const recipe_healthlabels = sequelize.define('recipe_healthlabels', {
 const images = sequelize.define('images', {
   foodid: {
       type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
       allowNull: false
   },
@@ -342,7 +343,7 @@ const mealtype = sequelize.define('mealtype', {
       autoIncrement: true
   },
   name: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT('long'),
       allowNull: false
   }
 }, {
@@ -383,7 +384,7 @@ const nutrientnames = sequelize.define('nutrientnames', {
       autoIncrement: true
   },
   nutrient_name: {
-      type: DataTypes.CHAR(50),
+      type: DataTypes.TEXT('long'),
       allowNull: false
   }
 }, {
@@ -407,15 +408,15 @@ const totalnutrients = sequelize.define('totalnutrients', {
       }
   },
   label: {
-      type: DataTypes.CHAR(255),
+      type: DataTypes.TEXT,
       allowNull: false
   },
   quantity: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.REAL,
       allowNull: false
   },
   unit: {
-      type: DataTypes.CHAR(50),
+      type: DataTypes.TEXT,
       allowNull: false
   },
   nutrient_id: {
@@ -432,16 +433,20 @@ const totalnutrients = sequelize.define('totalnutrients', {
 });
 
 // define the dishtype model
-const dishtype = sequelize.define('dishtype', {
+const dishtypes = sequelize.define('dishtypes', {
   id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
+      primaryKey: true
   },
   name: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false
   }
+}, {
+  tableName: 'dishtypes',
+  timestamps: false // set to true if you want 'createdAt' and 'updatedAt' fields
+
 });
 
 // define the recipe_dishtype model
@@ -460,7 +465,7 @@ const recipe_dishtype = sequelize.define('recipe_dishtype', {
       allowNull: false,
       primaryKey: true,
       references: {
-          model: dishtype,
+          model: dishtypes,
           key: 'id'
       }
   }
@@ -487,7 +492,7 @@ const recipeTables = [
   recipe_mealtype, 
   nutrientnames, 
   totalnutrients, 
-  dishtype, 
+  dishtypes, 
   recipe_dishtype
 ];
 
@@ -505,14 +510,20 @@ module.exports.initialize = () => {
     //   reject("Unable to create Recipes table");
     // });
 
-    for (let i = 0; i < recipeTables.length; i++) {
-      const table = recipeTables[i];
-      sequelize.sync().then((table) => {
-        resolve(`Successfully created ${table} table`);
-      }).catch((err) => { 
-        reject(`Unable to create ${table} table`);
-      });
+    try {
+      for (let i = 0; i < recipeTables.length; i++) {
+        const table = recipeTables[i];
+        sequelize.sync().then((table) => {
+          resolve();
+        }).catch((err) => { 
+          reject(`Unable to create ${table} table`);
+        });
+      }
+    } catch (err) {
+      reject("Unable to create Recipes table");
     }
+
+    
 
     // sequelize.sync().then((ingredient_image) => {
     //   resolve();
@@ -622,6 +633,6 @@ module.exports.initialize = () => {
     //   reject("Unable to create Recipe_dishtype table");
     // });
 
-    reject("Unable to sync database");
+    // reject("Unable to sync database");
   });
 };
