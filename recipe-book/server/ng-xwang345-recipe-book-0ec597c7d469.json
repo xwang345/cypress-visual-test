@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "ng-xwang345-recipe-book",
+  "private_key_id": "0ec597c7d46973552690cea88d1d73f2268de3d2",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCnvOVQf0MWF9O0\nNeKl0EjbhckupAhqyp4zMiuREBKinE9trG8/G087Ndj6zbyfiRITHuTafE8v+GsE\npWklyTFZRJC24n/w+CKUK2zvXa/LvyvM5Ghld1/hy517UPs9jXA01fjutN/UMmOW\nJ4EC2tBZ2daQY6DqW2MEOCXrmOeQe61ZgDuOJyAjQwCZUepsTNnktdCgUWzZe4j8\nuAmLK1rksMr1zSVI6n5/cNjPMOIbavKgZm1jYQ18wbb06zwwZL3qPjCQpKm2jJlb\nGbsYvgzQCdWG18DswQ+h727UC7T9Bzm+2z7fzOIPCPaE1spk+S7mkB3arvqperrU\nOGIZnj3pAgMBAAECggEAMIWWGDkYIPX3ibPkwm6EBOyoi9Nrk+jU5p5mt+ncWim5\nWFJ/Q9QUkV48TCDjpYqzLdDMBt/a0FeeLZPj3MhcfCQ3cJAIzp4Y8p+1PXDuf5Pn\nibew81ka5WhPP/LnGqElikMzZWnxLaL959u5mCfQCY3YYaBQVjrlY70SSxrKMaL8\nTijUsd/MLp3yGqJbNk6NCioQoBmIU5E859io48snMc5arr4TkHT6Sv7IWe9zI/8N\nU05uKfsYTF6Gu4bzxowCd7iGRiyV6Nn9ulVi3PlxDfspZ5/jnNFtSuxvx0Kzb55p\nFs1BAWghCU+IwSGu1yrc7M4c6fc6KCcx2j6lG+nEmQKBgQDsZoiZfYdqpJ7+mdr+\nd62AcOytW/k1AGapg92ogwNmcGFq2vfdi9YsZKL45kWJyL8HG71vyyDScUp2HK1O\nl7v9k8wismJ8PxRGRvOXoJ+Ipf98Cvdz8EozxqtQ+Hq/XKJ9GvD/ElJgQeS6edm+\ntqfk85JGRoIp65CKY/FEcgnf5wKBgQC1pQldfAY6Hu0Gcj0FR3u8ZYLT5Bba9LBK\nz39h3OrMLIEdpxIRqcn8tW6hKahvGO2HgZWpI1jpTTeHXAN+heRlb36juJJxBNp1\n3ANkLFw6Hl7WALvFPTaUm2zOisEvSEWB1FxwDiwSkRjdGqWLCOc7GYssg9V5Dury\nAXzzHGZ5rwKBgQDC9UxySTQEnv8AuaIBenF8G6UU02UScOI5qqaC8ok7UjMFDNCd\nxVU8B0LgQgfXOddQ5W+1YrAO3Z+rCLtktX40Ak+3zaWrEdqGmr0Jr03iRAQPKHwr\nAWAwkwd2H3YbmynmQvG9aj7FY5Jet178CWctSjK4Ai4WpE7v0ryG1gWOwQKBgQCh\nXVeQgNlXUJnoHBwxUGuP1e3/JqVXJgBmtSbIXWUItJCPMxhOMLOLl/ILoeJLr61z\nr56wfwJBX6Nw0EEaaP+ZTQ8HirQtSs533Vf16aKUzt4Y5tXoRpTyN5DVe1ZbFq0I\nxQrJUQ2+AMBBy6Y8eVBRpEOK7CL8RFBbZQ8HObefaQKBgQDeFngRSYB7850hVS7B\nzU06mLcS9jHxSMe24PFkh9Ibh0HOFyfJPi7AJK9V3y4JDqo9KxcmDiaqF7kSAfWF\nQDEeZXzNEPLcWGIsIiW3WOMlLmI9yxP/LLA4PpEoU/18Bzrjk0+ab3jVmsxSCLvn\ngjki2T1DZdjKnwPKnRjCIYsPxg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "ng-xwang345-recipe-book@appspot.gserviceaccount.com",
+  "client_id": "106591710128304878117",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ng-xwang345-recipe-book%40appspot.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

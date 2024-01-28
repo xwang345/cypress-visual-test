@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="col-md-5">
+    <h1 style="color: aliceblue;">Coming Soon! Under Development...</h1>
+    <br />
+    <br />
+    <mat-paginator [length]="recipeVideos.length"
+              [pageSize]="defaultPageSize"
+              [pageSizeOptions]="[5, 10, 25, recipeVideos.length]"
+              (page)="pageChanged($event)"
+              aria-label="Select page">
+    </mat-paginator>
+    <br />
+    <br />
+    <div class="grid-container" [@slideIn]>
+      <div *ngFor="let video of displayedVideo" class="grid-item" class="zoom-effect">
+        <mat-card style="color: aliceblue; border-radius: 30px;">
+          <mat-card-content >
+            <img [src]="video.thumbnail_medium_url" alt="{{ video.title }}" 
+            (click)="navigateToVideoPage(video.video_id)" style=" cursor: pointer;">
+            <a (click)="navigateToVideoPage(video.video_id)" style="cursor: pointer; text-decoration: none; color: azure;">
+              <h3><b>{{ video.title }}</b></h3>
+            </a>
+            <p>Channel: {{ video.channel_title }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-7">
+    <router-outlet></router-outlet>
+  </div>
+</div>

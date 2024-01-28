@@ -4,11 +4,23 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const chalk = require('chalk');
 const dataService = require('./data-service.js');
+const { Storage } = require('@google-cloud/storage');
+const schedule = require('node-schedule');
+const { json } = require('sequelize');
+const cors = require('cors');
 
+// Google Cloud Storage configuration
+const storage = new Storage({
+  projectId: 'ng-xwang345-recipe-book',
+  keyFilename: './ng-xwang345-recipe-book-0ec597c7d469.json',
+});
+
+const bucketName = 'ng-xwang345-recipe-book.appspot.com'; // Replace with your bucket name
 
 // Initialize Express
 const app = express();
 const port = 3000;
+app.use(cors()); // Enable CORS
 
 // PostgreSQL connection configuration
 // const pool = new Pool({
@@ -27,8 +39,8 @@ const poolRender = new Pool({
   password: 'sXjsgyEmDEGga4IVc4G7SFgnBZmwp3I8',
   port: 5432,
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 // Edamam API configuration
@@ -39,6 +51,7 @@ const from = 0; // Pagination start
 const to = 1; // Pagination end
 
 let result;
+let lastVideoId = null;
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -47,6 +60,23 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(express.json()); // Used to parse JSON bodies
+
+const getChannelVideos = async (channelId) => {
+  const response = await axios.get(
+    'https://www.googleapis.com/youtube/v3/search',
+    {
+      params: {
+        part: 'snippet',
+        channelId: channelId,
+        maxResults: 25,
+        key: 'AIzaSyBwrUutVOfYQKaLU6AX2tKO6JilQJp1GKo', // replace with your YouTube Data API key
+      },
+    }
+  );
+
+  return response.data.items;
+};
+
 
 async function fetchAllData(tableName) {
   const client = await poolRender.connect();
@@ -61,51 +91,58 @@ async function fetchAllData(tableName) {
   }
 }
 
-/**
- * Inserts images into the specified database table.
- * @param {Array<Object>} images - The array of images to be inserted.
- * @param {string} dbTableName - The name of the database table.
- * @returns {Promise<void>} - A promise that resolves when all images have been inserted.
- */
-const insertImages = async (images, dbTableName) => {
-  const client = await poolRender.connect(); // Create a PostgreSQL client/connection
-  try {
-    const insertQuery = `INSERT INTO ${dbTableName} (foodid, image) VALUES ($1, $2)`;
-    const insertPromises = images.map(async ({ imageUrl, imageId }) => {
-      try {
-        await client.query('BEGIN'); // Start transaction
+// /**
+//  * Inserts images into the specified database table.
+//  * @param {Array<Object>} images - The array of images to be inserted.
+//  * @param {string} dbTableName - The name of the database table.
+//  * @returns {Promise<void>} - A promise that resolves when all images have been inserted.
+//  */
+// const insertImages = async (images, dbTableName) => {
+//   const client = await poolRender.connect(); // Create a PostgreSQL client/connection
+//   try {
+//     const insertQuery = `INSERT INTO ${dbTableName} (foodid, image) VALUES ($1, $2)`;
+//     const insertPromises = images.map(async ({ imageUrl, imageId }) => {
+//       try {
+//         await client.query('BEGIN'); // Start transaction
 
-        if (imageUrl) {
-          const response = await axios.get(imageUrl, {
-            responseType: 'arraybuffer',
-          });
-          const imageBuffer = response.data;
-          await client.query(insertQuery, [imageId, imageBuffer]);
-        } else {
-          await client.query(insertQuery, [imageId, null]);
-        }
+//         if (imageUrl) {
+//           const response = await axios.get(imageUrl, {
+//             responseType: 'arraybuffer',
+//           });
+//           const imageBuffer = response.data;
 
-        await client.query('COMMIT'); // Commit transaction
-        console.log(
-          chalk.green(
-            `Image ${imageUrl ? imageUrl : 'with ID ' + imageId} has been inserted.`
-          )
-        );
-      } catch (error) {
-        console.error(
-          `Error inserting image ${imageUrl ? imageUrl : 'with ID ' + imageId}:`,
-          error
-        );
-      }
-    });
+//           // Store the image in Google Cloud Storage
+//           const fileName = `edamam_image/recipe_ingredient_image/${imageId}.jpg`; // Replace with the desired file name
 
-    await Promise.all(insertPromises);
-  } catch (error) {
-    console.error('Database error:', error);
-  } finally {
-    client.release(); // Ensure that client is always released
-  }
-};
+//           const file = storage.bucket(bucketName).file(fileName);
+//           await file.save(imageBuffer);
+
+//           // Get the Google Cloud Storage URL
+//           const googleImageUrl = `https://storage.cloud.google.com/${bucketName}/${fileName}`;
+
+//           console.log(chalk.blue(`Inserting image ${googleImageUrl}`));
+
+//           await client.query(insertQuery, [imageId, googleImageUrl]);
+//         } else {
+//           await client.query(insertQuery, [imageId, null]);
+//         }
+
+//         await client.query('COMMIT'); // Commit transaction
+//       } catch (error) {
+//         console.error(
+//           `Error inserting image ${imageUrl ? imageUrl : 'with ID ' + imageId}:`,
+//           error
+//         );
+//       }
+//     });
+
+//     await Promise.all(insertPromises);
+//   } catch (error) {
+//     console.error('Database error:', error);
+//   } finally {
+//     client.release(); // Ensure that client is always released
+//   }
+// };
 
 const fetchRecipes = async (ingredient) => {
   const url = `https://api.edamam.com/search?q=${encodeURIComponent(ingredient)}&app_id=${appId}&app_key=${appKey}&from=${from}&to=${to}`;
@@ -125,8 +162,10 @@ const insertRecipesIntoDB = async (recipesData) => {
     await client.query('BEGIN'); // Start transaction
 
     for (const hit of recipesData.hits) {
+      let imageId;
+
       console.log(
-        chalk.blue(`Inserting ${hit.recipe.label} into the database...`)
+        chalk.bgCyanBright(`Inserting ${hit.recipe.label} into the database...`)
       );
 
       const recipe = hit.recipe;
@@ -134,6 +173,23 @@ const insertRecipesIntoDB = async (recipesData) => {
       let labelCheckRes = await client.query(labelCheckQuery, [recipe.label]);
 
       if (labelCheckRes.rows.length === 0) {
+        const response = await axios.get(recipe.image, {
+          responseType: 'arraybuffer',
+        });
+        const imageBuffer = response.data;
+        let imageName = recipe.label.replace(/\s/g, '_');
+        let imageExtension =
+          response.headers['content-type'] === 'image/jpeg' ? '.jpg' : '.png';
+
+        // Store the image in Google Cloud Storage
+        const fileName = `edamam_image/recipe_image/${imageName}${imageExtension}`; // Replace with the desired file name
+
+        const file = storage.bucket(bucketName).file(fileName);
+        await file.save(imageBuffer);
+
+        // Get the Google Cloud Storage URL
+        const googleImageUrl = `https://storage.cloud.google.com/${bucketName}/${fileName}`;
+
         // Insert into 'recipes' table
         const recipeInsertQuery = `
           INSERT INTO recipes (label, image, source, url, shareAs, yield, totalTime)
@@ -141,7 +197,7 @@ const insertRecipesIntoDB = async (recipesData) => {
           RETURNING id;`;
         const recipeValues = [
           recipe.label,
-          recipe.image,
+          googleImageUrl,
           recipe.source,
           recipe.url,
           recipe.shareAs,
@@ -151,20 +207,16 @@ const insertRecipesIntoDB = async (recipesData) => {
         const recipeRes = await client.query(recipeInsertQuery, recipeValues);
         const recipeId = recipeRes.rows[0].id;
 
-        let imageId;
-
         const foodIdCheckQuery = `SELECT foodid FROM images WHERE foodid = $1;`;
         const foodIdCheckRes = await client.query(foodIdCheckQuery, [recipeId]);
 
         if (foodIdCheckRes.rows.length === 0) {
           const imagesToInsertQuery = `INSERT INTO images ( image) VALUES ($1) RETURNING foodid ;`;
-          const response = await axios.get(recipe.image, {
-            responseType: 'arraybuffer',
-          });
-          const imageBuffer = response.data;
           const imagesInsertRes = await client.query(imagesToInsertQuery, [
-            imageBuffer,
+            googleImageUrl,
           ]);
+
+          console.log(chalk.blue(`Inserting image ${googleImageUrl}`));
 
           imageId = imagesInsertRes.rows[0].foodid;
         } else {
@@ -178,27 +230,21 @@ const insertRecipesIntoDB = async (recipesData) => {
 
         // Insert into 'ingredients' table
         for (const ingredient of recipe.ingredients) {
-          // Check if ingredient image already exists
-          let recipeImageCheckQuery =
-            'SELECT foodid FROM ingredient_image WHERE foodid = $1;';
-          let recipeImageCheckRes = await client.query(recipeImageCheckQuery, [
-            ingredient.foodId,
-          ]);
-          let imagesToInsert = {
-            imageUrl: ingredient.image,
-            imageId: ingredient.foodId,
-          };
+          let response = await axios.get(ingredient.image, {
+            responseType: 'arraybuffer',
+          });
+          let imageBuffer = response.data;
+          let imageExtension =
+            response.headers['content-type'] === 'image/jpeg' ? '.jpg' : '.png';
 
-          if (recipeImageCheckRes.rows.length === 0) {
-            // Insert ingredient image into database
-            await insertImages([imagesToInsert], 'ingredient_image');
-          } else {
-            console.log(
-              chalk.red(
-                `Image ${JSON.stringify(recipeImageCheckRes.rows)}} already exists in the database.`
-              )
-            );
-          }
+          // Store the image in Google Cloud Storage
+          let fileName = `edamam_image/recipe_ingredient_image/${ingredient.foodId}${imageExtension}`; // Replace with the desired file name
+
+          let file = storage.bucket(bucketName).file(fileName);
+          await file.save(imageBuffer);
+
+          // Get the Google Cloud Storage URL
+          const googleImageUrl = `https://storage.cloud.google.com/${bucketName}/${fileName}`;
 
           const ingredientInsertQuery = `
               INSERT INTO ingredients (recipe_id, text, quantity, measure, food, weight, foodCategory, foodId, image)
@@ -213,7 +259,7 @@ const insertRecipesIntoDB = async (recipesData) => {
             ingredient.weight,
             ingredient.foodCategory,
             ingredient.foodId,
-            ingredient.image,
+            googleImageUrl,
           ];
 
           await client.query(ingredientInsertQuery, ingredientValues);
@@ -414,10 +460,208 @@ const insertRecipesIntoDB = async (recipesData) => {
     throw error;
   } finally {
     client.release();
-    result = await client.query(`SELECT * FROM recipes;`);
+    result = await client.query(`
+    SELECT 
+    r.id, r.label, r.image, r.source, r.url, r.shareas, r.yield, r.totaltime,
+    string_agg(DISTINCT i.text, ', ') AS ingredients_list,
+    string_agg(DISTINCT CAST(i.foodid AS VARCHAR), ', ') AS ingredients_foodid,
+    string_agg(DISTINCT CAST(i.image AS VARCHAR), ', ') AS ingredients_image,
+    string_agg(DISTINCT nn.nutrient_name, ', ') AS nutrient_name,
+    string_agg(DISTINCT n.label || ' ' || n.quantity::text || ' ' || n.unit::text, ', ') AS nutrient_quantity 
+    FROM recipes r 
+    LEFT JOIN ingredients i ON r.id = i.recipe_id 
+    LEFT JOIN recipe_image ri ON r.id = ri.recipe_id
+    LEFT JOIN images im ON ri.image_id = im.foodid
+    LEFT JOIN totalnutrients n ON r.id = n.recipe_id
+    LEFT JOIN nutrientnames nn ON nn.id = n.nutrient_id
+    GROUP BY r.id;
+    `);
     console.log(chalk.blue(`${result.rows.length} rows in the database`)); // 'rows' contains the query results
   }
 };
+
+const insertVideoIntoDB = async (videos) => {
+  const client = await poolRender.connect();
+
+  try {
+    await client.query('BEGIN'); // Start transaction
+
+    console.log(chalk.red(JSON.stringify(videos.length)));
+
+    for (let i=0; i<videos.length; i++) {      
+      if(videos[i].id.videoId) {
+        const videoCheckQuery = 'SELECT * FROM video.video WHERE video_id= $1;';
+        const videoCheckRes = await client.query(videoCheckQuery, [videos[i].id.videoId]);
+
+        if (videoCheckRes.rows.length === 0) {
+          const videoInsertQuery = `
+            INSERT INTO video.video (
+              video_id, 
+              title, 
+              description, 
+              published_at, 
+              channel_id, 
+              channel_title,
+              publish_time,
+              thumbnail_default_url,
+              thumbnail_default_width,
+              thumbnail_default_height,
+              thumbnail_medium_url,
+              thumbnail_medium_width,
+              thumbnail_medium_height,
+              thumbnail_high_url,
+              thumbnail_high_width,
+              thumbnail_high_height,
+              live_broadcast_content
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 
+              $11, $12, $13, $14, $15, $16, $17);
+          `;
+        const videoValues = [
+          videos[i].id.videoId,
+          videos[i].snippet.title,
+          videos[i].snippet.description,
+          videos[i].snippet.publishedAt,
+          videos[i].snippet.channelId,
+          videos[i].snippet.channelTitle,
+          videos[i].snippet.publishTime,
+          videos[i].snippet.thumbnails.default.url,
+          videos[i].snippet.thumbnails.default.width,
+          videos[i].snippet.thumbnails.default.height,
+          videos[i].snippet.thumbnails.medium.url,
+          videos[i].snippet.thumbnails.medium.width,
+          videos[i].snippet.thumbnails.medium.height,
+          videos[i].snippet.thumbnails.high.url,
+          videos[i].snippet.thumbnails.high.width,
+          videos[i].snippet.thumbnails.high.height,
+          videos[i].snippet.liveBroadcastContent
+        ];
+        await client.query(videoInsertQuery, videoValues);
+
+        await client.query('COMMIT'); // Commit transaction
+        console.log(chalk.green(`Inserting ${videos[i].id.videoId} into the database...`));
+        } else {
+          console.log(
+            chalk.red(`Video already exists in the database: ${videos[i].id.videoId}`)
+          );
+        }
+      } 
+    }
+  } catch (error) {
+    await client.query('ROLLBACK'); // Rollback transaction on error
+    console.error('Transaction error inserting data into PostgreSQL:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+const retrieveVideosByTitle = async (title) => {
+  const client = await poolRender.connect();
+  try {
+    const result = await client.query(`
+    SELECT * FROM video.video WHERE title ILIKE $1;
+    `, [`%${title}%`]);
+    console.log(chalk.blue(`${result.rows} rows in the database`));
+    return result.rows; // 'rows' contains the query results
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+const retrieveVideosByChannelId = async (channelId) => {
+  const client = await poolRender.connect();
+  try {
+    const result = await client.query(`
+    SELECT * FROM video.video WHERE channel_id = $1;
+    `, [channelId]);
+    return result.rows; // 'rows' contains the query results
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}; 
+
+const retrieveVideosByVideoId = async (video_id) => {
+  const client = await poolRender.connect();
+  try {
+    const result = await client.query(`
+    SELECT * FROM video.video WHERE video_id = $1;
+    `, [video_id]);
+    return result.rows; // 'rows' contains the query results
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+app.use('/videos', cors(), async (req, res) => {
+  try {
+    const videos = await fetchAllData('video.video');
+    res.setHeader('Content-Type', 'application/json');
+    res.json(videos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
+});
+
+app.use('/videos/:channelId', cors(), async (req, res) => {
+  const { channelId } = req.params;
+  try {
+    const videos = await retrieveVideosByChannelId(channelId);
+    res.setHeader('Content-Type', 'application/json');
+    res.json(videos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
+});
+
+app.use('/videos/title/:title', cors(), async (req, res) => {
+  const { title } = req.params;
+  try {
+    const videos = await retrieveVideosByTitle(title);
+    res.setHeader('Content-Type', 'application/json');
+    res.json(videos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
+});
+
+app.use('/videos/video_id/:video_id', cors(), async (req, res) => {
+  const { video_id } = req.params;
+  try {
+    const videos = await retrieveVideosByVideoId(video_id);
+    res.setHeader('Content-Type', 'application/json');
+    res.json(videos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
+});
+
+app.use('/recipes/youtube/:channelId', cors(), async (req, res) => {
+  const { channelId } = req.params;
+  
+  try {
+    const videos = await getChannelVideos(channelId);
+    res.setHeader('Content-Type', 'application/json');
+    res.json(videos);
+    await insertVideoIntoDB(videos); // Insert videos into the database
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
+});
 
 // Route to fetch and insert recipes based on user query
 app.get('/recipes/:ingredient', async (req, res) => {
@@ -445,11 +689,12 @@ app.get('/recipes/label/:label', async (req, res) => {
   console.log(chalk.blue(label));
 
   try {
-    const query = `
+    const recipeQuery = `
     SELECT 
     r.id, r.label, r.image, r.source, r.url, r.shareas, r.yield, r.totaltime,
     string_agg(DISTINCT i.text, ', ') AS ingredients_list,
-    string_agg(DISTINCT i.foodid, ', ') AS ingredients_foodid,
+    string_agg(DISTINCT CAST(i.foodid AS VARCHAR), ', ') AS ingredients_foodid,
+    string_agg(DISTINCT CAST(i.image AS VARCHAR), ', ') AS ingredients_image,
     string_agg(DISTINCT nn.nutrient_name, ', ') AS nutrient_name,
     string_agg(DISTINCT n.label || ' ' || n.quantity::text || ' ' || n.unit::text, ', ') AS nutrient_quantity 
     FROM recipes r 
@@ -462,7 +707,7 @@ app.get('/recipes/label/:label', async (req, res) => {
     GROUP BY r.id;
       `;
     const values = [`%${label}%`]; // '%' wildcards allow for partial matching
-    const queryResult = await poolRender.query(query, values);
+    const queryResult = await poolRender.query(recipeQuery, values);
     if (queryResult.rows.length > 0) {
       res.setHeader('Content-Type', 'application/json');
       res.json(queryResult.rows);
@@ -477,19 +722,17 @@ app.get('/recipes/label/:label', async (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(chalk.yellow('==========    System is running   =========='));
-  console.log(chalk.yellow('===                                      ==='));
   console.log(chalk.yellow(`== Express http server listening on: ${port} ==`));
-  console.log(chalk.yellow('===                                      ==='));
-  console.log(chalk.yellow('============================================'));
-  console.log(chalk.greenBright(`Server running on port ${port}`));
   return new Promise((res, req) => {
-    dataService.initialize().then(() => {
-      console.log(chalk.bgGreen("============================================"));
-      console.log(chalk.bgGreen("Now can connect to the database       !!!!!!"));
-      console.log(chalk.bgGreen("============================================"));
-    }).catch((err) => {
-      console.log(chalk.bgRed(err));
-    });
+    dataService
+      .initialize()
+      .then(() => {
+        console.log(
+          chalk.bgGreen('=====  Now can connect to the database  ====')
+        );
+      })
+      .catch((err) => {
+        console.log(chalk.bgRed(err));
+      });
   });
 });
