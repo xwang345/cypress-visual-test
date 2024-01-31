@@ -1,16 +1,47 @@
 export class RecipeVideo {
-	public title: string
-	public video_id: string
-	public channel_id: string
-	public channel_title: string
-	public description: string
-	public thumbnail_default_url: string
-	public thumbnail_high_url: string
-	public thumbnail_medium_url: string
-	public thumbnail_default_width: number
-	public thumbnail_default_height: number
-	public thumbnail_high_width: number
-	public thumbnail_high_height: number
-	public thumbnail_medium_width: number
-	public thumbnail_medium_height: number
+	public kind: string
+	public etag: string
+	public id: string
+	public snippet: {
+		publishedAt: string
+		channelId: string
+		title: string
+		description: string
+		thumbnails: {
+			default: {
+				url: string
+				width: number
+				height: number
+			}
+			medium: {
+				url: string
+				width: number
+				height: number
+			}
+			high: {
+				url: string
+				width: number
+				height: number
+			}
+			standard: {
+				url: string
+				width: number
+				height: number
+			}
+			maxres: {
+				url: string
+				width: number
+				height: number
+			}
+		}
+		channelTitle: string
+		playlistId: string
+		position: number
+		resourceId: {
+			kind: string
+			videoId: string
+		}
+		videoOwnerChannelTitle: string
+		videoOwnerChannelId: string
+	}
 }

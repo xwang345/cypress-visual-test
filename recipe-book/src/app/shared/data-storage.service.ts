@@ -1,19 +1,24 @@
-import { Injectable } from '@angular/core'
+import { Injectable, OnInit, OnDestroy } from '@angular/core'
 import { HttpClient, HttpParams } from '@angular/common/http'
 import { RecipeService } from '../recipes/recipe.service'
 import { EdamamRecipeService } from '../third-party-recipe/edamamRecipe.service'
 import { Recipe } from '../recipes/recipe.model'
-import { map, tap, take, exhaustMap } from 'rxjs/operators'
-import { AuthService } from '../auth/auth.service'
+import { map, tap } from 'rxjs/operators'
+import { io } from 'socket.io-client'
+import { Observable } from 'rxjs'
 
 @Injectable({ providedIn: 'root' }) // This is the recommended way to provide a service in Angular 6 and up.
-export class DataStorageService {
+export class DataStorageService implements OnInit {
+	socket: any
+	private readonly serverUrl = 'http://localhost:3000'
+
 	constructor(
 		private http: HttpClient,
 		private recipeService: RecipeService,
 		private EdamamRecipeService: EdamamRecipeService,
-		private authService: AuthService,
 	) {}
+
+	ngOnInit() {}
 
 	storeRecipes() {
 		const recipes = this.recipeService.getRecipes()
@@ -62,19 +67,16 @@ export class DataStorageService {
 		)
 	}
 
-	fetchAllRecipeVideos() {
-		return this.http.get(`http://localhost:3000/videos`).pipe(
-			map((recipeVideos) => {
-				return recipeVideos
-			}),
-			tap((recipeVideos) => {
-				this.recipeService.setRecipeVideo(recipeVideos)
-			}),
-		)
+	onYouTubeVideosDBFetched(): Observable<any> {
+		return new Observable((observer) => {
+			this.socket.on('fetchAllVideosDB', (tableName) => {
+				observer.next(tableName)
+			})
+		})
 	}
 
 	fetchRecipeVideoFromYoutubeByTitle(title: string) {
-		return this.http.get(`http://localhost:3000/videos/title/${title}`).pipe(
+		return this.http.get(`http://localhost:3000/videos/${title}`).pipe(
 			map((recipeVideo) => {
 				return recipeVideo
 			}),
@@ -82,19 +84,6 @@ export class DataStorageService {
 				this.recipeService.setRecipeVideo(recipeVideo)
 			}),
 		)
-	}
-
-	fetchRecipeVideoFromYoutubeByVideoId(videoId: string) {
-		return this.http
-			.get(`http://localhost:3000/videos/video_id/${videoId}`)
-			.pipe(
-				map((recipeVideo) => {
-					return recipeVideo
-				}),
-				tap((recipeVideo) => {
-					this.recipeService.setRecipeVideo(recipeVideo)
-				}),
-			)
 	}
 
 	fetchRecipesFromEdamam(ingredient: string) {

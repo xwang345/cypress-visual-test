@@ -24,7 +24,10 @@ export class RecipeVideoService {
 
 	getRecipeVideoByTitle(title: string) {
 		let selectedRecipeVideos = this.recipeVideos.find((recipeVideo) => {
-			if (recipeVideo.title.toLocaleLowerCase() === title.toLocaleLowerCase()) {
+			if (
+				recipeVideo.snippet.resourceId.videoId.toLocaleLowerCase() ===
+				title.toLocaleLowerCase()
+			) {
 				return recipeVideo
 			}
 		})

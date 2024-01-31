@@ -2,4 +2,15 @@
   <div class="iframe-container">
     <iframe width="960" height="640" [src]="videoUrl" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
   </div>
+  <div class="row">
+    <mat-card>
+      <mat-card-content>
+        <h3><b>{{ selectedVideo.snippet.title }}</b></h3>
+        <p>Channel: {{ selectedVideo.snippet.channelTitle }}</p>
+        <p>Published At: {{ selectedVideo.snippet.publishedAt }}</p>
+        <p>Description: {{ selectedVideo.snippet.description }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>
+

@@ -3,9 +3,21 @@
     <h1 style="color: aliceblue;">Coming Soon! Under Development...</h1>
     <br />
     <br />
+    <div style="display: flex; align-items: center;">
+      <mat-form-field appearance="fill" style="flex-grow: 1; width:auto;">
+        <mat-label>add channel's video</mat-label>
+        <input matInput type="text" [(ngModel)]="channelId" placeholder="fetch channel's video by channel id">
+      </mat-form-field>
+      <button 
+        mat-mini-fab color="accent" 
+        aria-label="Example icon button with a plus one icon"
+        (click)="searchVideosByChannelId()">
+        <mat-icon>search</mat-icon>
+      </button>
+    </div>
     <mat-paginator [length]="recipeVideos.length"
               [pageSize]="defaultPageSize"
-              [pageSizeOptions]="[5, 10, 25, recipeVideos.length]"
+              [pageSizeOptions]="[6, 9, 18, 36, 72, recipeVideos.length]"
               (page)="pageChanged($event)"
               aria-label="Select page">
     </mat-paginator>
@@ -15,12 +27,13 @@
       <div *ngFor="let video of displayedVideo" class="grid-item" class="zoom-effect">
         <mat-card style="color: aliceblue; border-radius: 30px;">
           <mat-card-content >
-            <img [src]="video.thumbnail_medium_url" alt="{{ video.title }}" 
-            (click)="navigateToVideoPage(video.video_id)" style=" cursor: pointer;">
-            <a (click)="navigateToVideoPage(video.video_id)" style="cursor: pointer; text-decoration: none; color: azure;">
-              <h3><b>{{ video.title }}</b></h3>
+            <img [src]="video.snippet.thumbnails.medium.url" alt="{{ video.title }}" 
+            (click)="navigateToVideoPage(video.snippet.resourceId.videoId)" style=" cursor: pointer;">
+            <a (click)="navigateToVideoPage(video.snippet.resourceId.videoId)" style="cursor: pointer; text-decoration: none; color: azure;">
+              <h3><b>{{ video.snippet.title }}</b></h3>
             </a>
-            <p>Channel: {{ video.channel_title }}</p>
+            <p>Channel: {{ video.snippet.channelTitle }}</p>
+            <button mat-raised-button color="accent" (click)="downloadVideoById(video.snippet.resourceId.videoId)">Download Video</button>
           </mat-card-content>
         </mat-card>
       </div>

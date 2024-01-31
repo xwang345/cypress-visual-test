@@ -5,6 +5,8 @@ import { DataStorageService } from '../shared/data-storage.service'
 import { PageEvent } from '@angular/material/paginator'
 import { Router } from '@angular/router'
 import { trigger, transition, style, animate } from '@angular/animations'
+import { SocketIoService } from '../shared/socket.io.service'
+import { data } from 'cypress/types/jquery'
 
 @Component({
 	selector: 'recipe-video',
@@ -23,23 +25,42 @@ export class RecipeVideoComponent implements OnInit, OnDestroy {
 	recipeVideos = []
 	subscription: Subscription
 	displayedVideo: any[] = []
-	defaultPageSize: number = 10
+	defaultPageSize: number = 9
+	channelId: string
 
 	constructor(
 		private recipeVideoService: RecipeVideoService,
 		private dataStorageService: DataStorageService,
+		private socketIoService: SocketIoService,
 		private router: Router,
 	) {}
 
 	ngOnInit() {
-		this.subscription = this.dataStorageService
-			.fetchAllRecipeVideos()
-			.subscribe((recipeVideos: any[]) => {
-				console.log('recipeVideos: ' + JSON.stringify(recipeVideos))
-				this.recipeVideos = recipeVideos
-				this.recipeVideoService.setRecipeVideos(this.recipeVideos)
+		this.socketIoService.emitToServer('fetchAllVideosDB', 'video.video')
+
+		this.subscription = this.socketIoService
+			.listenToServer('youtubeVideosFetched')
+			.subscribe((data) => {
+				this.recipeVideos = data
 				this.updateDisplayedVideo()
 			})
+	}
+
+	searchVideosByChannelId() {
+		this.socketIoService.emitToServer('fetchYouTubeVideos', this.channelId)
+
+		this.socketIoService
+			.listenToServer('youtubeVideosFetched')
+			.subscribe((data) => {
+				this.recipeVideos = data
+				this.updateDisplayedVideo()
+			})
+	}
+
+	public downloadVideoById(videoId: string) {
+		this.socketIoService.emitToServer('downloadVideoById', videoId)
+
+		this.socketIoService.listenToServer('videoDownloaded')
 	}
 
 	navigateToVideoPage(video_id: string) {
@@ -73,6 +94,8 @@ export class RecipeVideoComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy() {
-		this.subscription.unsubscribe()
+		if (this.subscription) {
+			this.subscription.unsubscribe()
+		}
 	}
 }
