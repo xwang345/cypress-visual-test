@@ -8,6 +8,9 @@ const { Storage } = require('@google-cloud/storage');
 const schedule = require('node-schedule');
 const { json } = require('sequelize');
 const cors = require('cors');
+const { google } = require('googleapis');
+const http = require('http');
+const socketIo = require('socket.io');
 
 // Google Cloud Storage configuration
 const storage = new Storage({
@@ -19,6 +22,8 @@ const bucketName = 'ng-xwang345-recipe-book.appspot.com'; // Replace with your b
 
 // Initialize Express
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
 const port = 3000;
 app.use(cors()); // Enable CORS
 
@@ -61,21 +66,49 @@ app.use(bodyParser.json());
 
 app.use(express.json()); // Used to parse JSON bodies
 
-const getChannelVideos = async (channelId) => {
-  const response = await axios.get(
-    'https://www.googleapis.com/youtube/v3/search',
-    {
-      params: {
-        part: 'snippet',
-        channelId: channelId,
-        maxResults: 25,
-        key: 'AIzaSyBwrUutVOfYQKaLU6AX2tKO6JilQJp1GKo', // replace with your YouTube Data API key
-      },
-    }
-  );
+// Initialize the YouTube API client
+const youtube = google.youtube({
+  version: 'v3',
+  auth: 'AIzaSyBwrUutVOfYQKaLU6AX2tKO6JilQJp1GKo' // Replace 'YOUR_API_KEY' with your actual API key
+});
 
-  return response.data.items;
-};
+async function getUploadsPlaylistId(channelId) {
+  const response = await youtube.channels.list({
+    part: 'contentDetails',
+    id: channelId // or use 'forUsername' if you have the channel's username
+  });
+
+  const uploadsId = response.data.items[0].contentDetails.relatedPlaylists.uploads;
+  return uploadsId;
+}
+
+async function fetchAllVideos(playlistId) {
+  let videos = [];
+  let pageToken = null;
+
+  do {
+    const response = await youtube.playlistItems.list({
+      part: 'snippet',
+      playlistId: playlistId,
+      maxResults: 50, // Adjust as needed
+      pageToken: pageToken
+    });
+
+    videos = videos.concat(response.data.items);
+    pageToken = response.data.nextPageToken;
+  } while (pageToken);
+
+  return videos;
+}
+
+async function fetchVideoDetails(videoId) {
+  const response = await youtube.videos.list({
+    part: 'snippet,statistics',
+    id: videoId
+  });
+
+  return response.data.items[0];
+}
 
 
 async function fetchAllData(tableName) {
@@ -480,79 +513,120 @@ const insertRecipesIntoDB = async (recipesData) => {
   }
 };
 
+// const insertVideoIntoDB = async (videos) => {
+//   const client = await poolRender.connect();
+
+//   try {
+//     await client.query('BEGIN'); // Start transaction
+
+//     videos.map(async (video) => {
+//       const videoCheckQuery = 'SELECT * FROM video.video WHERE video_id = $1;';
+//         const videoCheckRes = await client.query(videoCheckQuery, [video.snippet.resourceId.videoId]);
+
+//         if (videoCheckRes.rows.length === 0) {
+//           const videoInsertQuery = `
+//             INSERT INTO video.video (
+//               video_id, 
+//               title, 
+//               description, 
+//               published_at, 
+//               channel_id, 
+//               channel_title,
+//               publish_time,
+//               thumbnail_default_url,
+//               thumbnail_default_width,
+//               thumbnail_default_height,
+//               thumbnail_medium_url,
+//               thumbnail_medium_width,
+//               thumbnail_medium_height,
+//               thumbnail_high_url,
+//               thumbnail_high_width,
+//               thumbnail_high_height,
+//               live_broadcast_content
+//             )
+//             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 
+//               $11, $12, $13, $14, $15, $16, $17);
+//           `;
+//           const videoValues = [
+//             video.snippet.resourceId.videoId,
+//             video.snippet.title,
+//             video.snippet.description,
+//             video.snippet.publishedAt,
+//             video.snippet.channelId,
+//             video.snippet.channelTitle,
+//             video.snippet.publishTime,
+//             video.snippet.thumbnails.default.url,
+//             video.snippet.thumbnails.default.width,
+//             video.snippet.thumbnails.default.height,
+//             video.snippet.thumbnails.medium.url,
+//             video.snippet.thumbnails.medium.width,
+//             video.snippet.thumbnails.medium.height,
+//             video.snippet.thumbnails.high.url,
+//             video.snippet.thumbnails.high.width,
+//             video.snippet.thumbnails.high.height,
+//             video.snippet.liveBroadcastContent
+//           ];
+//           await client.query(videoInsertQuery, videoValues);
+
+//           console.log(chalk.green(`Inserting ${video.snippet.resourceId.videoId} into the database...`));
+//         } else {
+//           console.log(chalk.red(`Video already exists in the database: ${video.snippet.resourceId.videoId}`));
+//         }
+//     });
+
+//     await client.query('COMMIT'); // Commit transaction
+//   } catch (error) {
+//     await client.query('ROLLBACK'); // Rollback transaction on error
+//     console.error('Transaction error inserting data into PostgreSQL:', error);
+//     throw error;
+//   } finally {
+//     client.release();
+//   }
+// };
+
 const insertVideoIntoDB = async (videos) => {
   const client = await poolRender.connect();
 
   try {
     await client.query('BEGIN'); // Start transaction
 
-    console.log(chalk.red(JSON.stringify(videos.length)));
+    for (const video of videos) {
+      const videoCheckQuery = 'SELECT * FROM video.video WHERE id = $1;';
+      const videoCheckRes = await client.query(videoCheckQuery, [video.id]);
 
-    for (let i=0; i<videos.length; i++) {      
-      if(videos[i].id.videoId) {
-        const videoCheckQuery = 'SELECT * FROM video.video WHERE video_id= $1;';
-        const videoCheckRes = await client.query(videoCheckQuery, [videos[i].id.videoId]);
-
-        if (videoCheckRes.rows.length === 0) {
-          const videoInsertQuery = `
-            INSERT INTO video.video (
-              video_id, 
-              title, 
-              description, 
-              published_at, 
-              channel_id, 
-              channel_title,
-              publish_time,
-              thumbnail_default_url,
-              thumbnail_default_width,
-              thumbnail_default_height,
-              thumbnail_medium_url,
-              thumbnail_medium_width,
-              thumbnail_medium_height,
-              thumbnail_high_url,
-              thumbnail_high_width,
-              thumbnail_high_height,
-              live_broadcast_content
-            )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 
-              $11, $12, $13, $14, $15, $16, $17);
-          `;
+      if (videoCheckRes.rows.length === 0) {
+        const videoInsertQuery = `
+          INSERT INTO video.video (
+            kind,
+            etag,
+            id,
+            snippet
+          )
+          VALUES ($1, $2, $3, $4);
+        `;
         const videoValues = [
-          videos[i].id.videoId,
-          videos[i].snippet.title,
-          videos[i].snippet.description,
-          videos[i].snippet.publishedAt,
-          videos[i].snippet.channelId,
-          videos[i].snippet.channelTitle,
-          videos[i].snippet.publishTime,
-          videos[i].snippet.thumbnails.default.url,
-          videos[i].snippet.thumbnails.default.width,
-          videos[i].snippet.thumbnails.default.height,
-          videos[i].snippet.thumbnails.medium.url,
-          videos[i].snippet.thumbnails.medium.width,
-          videos[i].snippet.thumbnails.medium.height,
-          videos[i].snippet.thumbnails.high.url,
-          videos[i].snippet.thumbnails.high.width,
-          videos[i].snippet.thumbnails.high.height,
-          videos[i].snippet.liveBroadcastContent
+          video.kind,
+          video.etag,
+          video.id,
+          video.snippet
         ];
         await client.query(videoInsertQuery, videoValues);
 
-        await client.query('COMMIT'); // Commit transaction
-        console.log(chalk.green(`Inserting ${videos[i].id.videoId} into the database...`));
-        } else {
-          console.log(
-            chalk.red(`Video already exists in the database: ${videos[i].id.videoId}`)
-          );
-        }
-      } 
+        console.log(chalk.green(`Inserting ${video.snippet.resourceId.videoId} into the database...`));
+        await fetchVideoDetails(video.snippet.resourceId.videoId);
+      } else {
+        console.log(chalk.red(`Video already exists in the database: ${video.snippet.resourceId.videoId}`));
+      }
     }
+
+    await client.query('COMMIT'); // Commit transaction
   } catch (error) {
-    await client.query('ROLLBACK'); // Rollback transaction on error
-    console.error('Transaction error inserting data into PostgreSQL:', error);
-    throw error;
+    await client.query('ROLLBACK'); // Rollback transaction in case of error
+    console.error('Error inserting videos into database:', error);
   } finally {
-    client.release();
+    client.release(); // Release client connection
+    // Emit event when commit is done
+    io.emit('commitDone', { message: 'Commit is done' });
   }
 };
 
@@ -637,8 +711,9 @@ app.use('/videos/title/:title', cors(), async (req, res) => {
   }
 });
 
-app.use('/videos/video_id/:video_id', cors(), async (req, res) => {
+app.use('/videoid/:video_id', cors(), async (req, res) => {
   const { video_id } = req.params;
+  console.log(chalk.blue(video_id));
   try {
     const videos = await retrieveVideosByVideoId(video_id);
     res.setHeader('Content-Type', 'application/json');
@@ -651,16 +726,58 @@ app.use('/videos/video_id/:video_id', cors(), async (req, res) => {
 
 app.use('/recipes/youtube/:channelId', cors(), async (req, res) => {
   const { channelId } = req.params;
+  console.log(chalk.red(channelId));
   
   try {
-    const videos = await getChannelVideos(channelId);
-    res.setHeader('Content-Type', 'application/json');
-    res.json(videos);
-    await insertVideoIntoDB(videos); // Insert videos into the database
+    getUploadsPlaylistId(channelId)
+      .then(playlistId => fetchAllVideos(playlistId))
+      .then(async (videos) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.json(videos);
+        try {
+          await insertVideoIntoDB(videos); // Insert videos into the database
+          console.log(chalk.bgGreenBright(`Found ${videos.length} videos.`));
+          // Process the videos as needed
+
+          // Emit an event to the frontend with the inserted videos
+          io.emit('videosInserted', videos);
+        } catch (error) {
+          console.error('Error inserting videos into DB: ', error);
+        }
+      })
+    .catch(error => console.error('Error: ', error));
   } catch (error) {
     console.error(error);
     res.status(500).send('Server Error');
   }
+});
+
+// Socket.IO connection listener
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  // Listen for fetchYouTubeVideos event
+  socket.on('fetchYouTubeVideos', async (channelId) => {
+    console.log(chalk.red(channelId));
+
+    try {
+      const playlistId = await getUploadsPlaylistId(channelId);
+      const videos = await fetchAllVideos(playlistId);
+
+      try {
+        await insertVideoIntoDB(videos);
+        console.log(chalk.bgGreenBright(`Found ${videos.length} videos.`));
+        socket.emit('youtubeVideosFetched', videos); // Emit after DB insertion
+      } catch (dbError) {
+        console.error(chalk.bgRed(`Database error: ${dbError.message}`));
+        socket.emit('youtubeVideosFetchError', dbError.message);
+      }
+
+    } catch (error) {
+      console.error(chalk.bgRed(`Error: ${error.message}`));
+      socket.emit('youtubeVideosFetchError', error.message);
+    }
+  });
 });
 
 // Route to fetch and insert recipes based on user query

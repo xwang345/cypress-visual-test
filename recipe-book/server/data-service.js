@@ -1,5 +1,72 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const chalk = require('chalk');
+const { google } = require('googleapis');
+const { OAuth2 } = google.auth;
+const { Pool } = require('pg');
+
+const poolRender = new Pool({
+  user: 'xwang345',
+  host: 'dpg-cmp4bgmn7f5s73dblc20-a.oregon-postgres.render.com',
+  database: 'recipedb_q8ko',
+  password: 'sXjsgyEmDEGga4IVc4G7SFgnBZmwp3I8',
+  port: 5432,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+
+// Initialize the YouTube API client
+const youtube = google.youtube({
+  version: 'v3',
+  auth: 'AIzaSyBwrUutVOfYQKaLU6AX2tKO6JilQJp1GKo' // Replace 'YOUR_API_KEY' with your actual API key
+});
+
+const oauth2Client = new OAuth2(
+  '90054152260-fjn5f41lkfangcbilm4ietat8md30843.apps.googleusercontent.com', // Replace with your OAuth2 client ID
+  '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', // Replace with your OAuth2 client secret
+  'http://localhost' // Replace with your OAuth2 redirect URL
+);
+
+// Scopes for request
+const SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl'];
+
+// Generate a url that asks permissions for the required scopes
+const url = oauth2Client.generateAuthUrl({
+  access_type: 'offline',
+  scope: SCOPES,
+});
+
+
+console.log(chalk.bgRedBright('Authorize this app by visiting this url:', url));
+
+async function getUploadsPlaylistId(channelId) {
+  const response = await youtube.channels.list({
+    part: 'contentDetails',
+    id: channelId // or use 'forUsername' if you have the channel's username
+  });
+
+  const uploadsId = response.data.items[0].contentDetails.relatedPlaylists.uploads;
+  return uploadsId;
+}
+
+async function fetchAllVideos(playlistId) {
+  let videos = [];
+  let pageToken = null;
+
+  do {
+    const response = await youtube.playlistItems.list({
+      part: 'snippet',
+      playlistId: playlistId,
+      maxResults: 50, // Adjust as needed
+      pageToken: pageToken
+    });
+
+    videos = videos.concat(response.data.items);
+    pageToken = response.data.nextPageToken;
+  } while (pageToken);
+
+  return videos;
+}
 
 // PostgreSQL connection configuration
 // const sequelize = new Sequelize('RecipeDB', 'postgres', 'Xlxc101302#', {
@@ -536,57 +603,21 @@ const recipe_dishtype = sequelize.define(
 const recipe_video = sequelize.define(
   'recipe_video',
   {
-    video_id: {
-      type: DataTypes.TEXT('long'),
+    kind: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    published_at: {
-      type: DataTypes.DATE,
+    etag: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    channel_id: {
-      type: DataTypes.TEXT('long'),
+    id: {
+      type: DataTypes.STRING,
+      primaryKey: true,
     },
-    title: {
-      type: DataTypes.TEXT('long'),
-    },
-    description: {
-      type: DataTypes.TEXT('long'),
-    },
-    thumbnail_default_url: {
-      type: DataTypes.TEXT('long'),
-    },
-    thumbnail_default_width: {
-      type: DataTypes.INTEGER,
-    },
-    thumbnail_default_height: {
-      type: DataTypes.INTEGER,
-    },
-    thumbnail_medium_url: {
-      type: DataTypes.TEXT('long'),
-    },
-    thumbnail_medium_width: {
-      type: DataTypes.INTEGER,
-    },
-    thumbnail_medium_height: {
-      type: DataTypes.INTEGER,
-    },
-    thumbnail_high_url: {
-      type: DataTypes.TEXT('long'),
-    },
-    thumbnail_high_width: {
-      type: DataTypes.INTEGER,
-    },
-    thumbnail_high_height: {
-      type: DataTypes.INTEGER,
-    },
-    channel_title: {
-      type: DataTypes.TEXT('long'),
-    },
-    live_broadcast_content: {
-      type: DataTypes.TEXT('long'),
-    },
-    publish_time: {
-      type: DataTypes.DATE,
+    snippet: {
+      type: DataTypes.JSONB,
+      allowNull: false,
     },
   },
   {
@@ -597,9 +628,6 @@ const recipe_video = sequelize.define(
 );
 
 module.exports.initialize = () => {
-  console.log(
-    chalk.bgBlueBright('===         initialize function          ===')
-  );
   sequelize.query('CREATE SCHEMA IF NOT EXISTS video;');
 
   return new Promise((resolve, reject) => {
