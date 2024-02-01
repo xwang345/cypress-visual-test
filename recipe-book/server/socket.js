@@ -1,18 +1,21 @@
-const express = require("express");
-const { createServer } = require("http");
-const { Server } = require("socket.io");
-const { google } = require('googleapis');
-const { Pool } = require('pg');
-const chalk = require('chalk');
-const cors = require('cors');
-const { Sequelize, DataTypes, json } = require('sequelize');
-const fs = require('fs');
-const ytdl = require('ytdl-core');
-const path = require('path');
-const os = require('os');
+import express from 'express';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import { google } from 'googleapis';
+import pg from 'pg';
+const { Pool } = pg;
+import chalk from 'chalk';
+import cors from 'cors';
+import Sequelize, { DataTypes } from 'sequelize';
+import fs from 'fs';
+import ytdl from 'ytdl-core';
+import path from 'path';
+import os from 'os';
+import { createClient } from 'redis';
 
 const app = express();
 app.use(cors());
+
 const httpServer = createServer(app);
 const io = new Server(httpServer, { cors: { origin: '*' } });
 
@@ -34,21 +37,6 @@ const sequelize = new Sequelize(
   }
 );
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log(chalk.green('Connection has been established successfully.'));
-  })
-  .catch((err) => {
-    console.log(`Unable to connect to the database: ${err}`);
-  });
-
-// Initialize the YouTube API client
-const youtube = google.youtube({
-  version: 'v3',
-  auth: 'AIzaSyBwrUutVOfYQKaLU6AX2tKO6JilQJp1GKo' // Replace 'YOUR_API_KEY' with your actual API key
-});
-
 const poolRender = new Pool({
   user: 'xwang345',
   host: 'dpg-cmp4bgmn7f5s73dblc20-a.oregon-postgres.render.com',
@@ -58,6 +46,29 @@ const poolRender = new Pool({
   ssl: {
     rejectUnauthorized: false,
   },
+});
+
+const client = createClient({
+  password: 'vHgVjnQ10t5C9fm5vZlo6ZsxfyVULoiQ',
+  socket: {
+      host: 'redis-16924.c322.us-east-1-2.ec2.cloud.redislabs.com',
+      port: 16924
+  }
+});
+
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log(chalk.bgGreen('Connection has been established successfully.'));
+  })
+  .catch((err) => {
+    console.log(`Unable to connect to the database: ${err}`);
+  });
+
+// Initialize the YouTube API client
+const youtube = google.youtube({
+  version: 'v3',
+  auth: 'AIzaSyBwrUutVOfYQKaLU6AX2tKO6JilQJp1GKo' // Replace 'YOUR_API_KEY' with your actual API key
 });
 
 async function fetchAllVideosFromDB(tableName) {
@@ -175,34 +186,11 @@ function getDownloadsFolderPath() {
   }
 }
 
-// const insertVideoIntoDB = async (videos) => {
-//   // Start a transaction
-//   const client = await poolRender.connect();
-
-//   try {
-//     await client.query('BEGIN');
-
-//     const insertVideosQuery = `
-//       INSERT INTO video.video (kind, etag, id, snippet)
-//       VALUES ($1, $2, $3, $4)
-//       ON CONFLICT (id) DO NOTHING
-//     `;
-
-//     // Use a single INSERT statement for all videos
-//     for (const video of videos) {
-//       console.log(chalk.green(`Inserting ${video.snippet.resourceId.videoId} into the database...`));
-//       await client.query(insertVideosQuery, [video.kind, video.etag, video.id, video.snippet]);
-//     }
-
-//     await client.query('COMMIT');
-//   } catch (error) {
-//     await client.query('ROLLBACK');
-//     throw error;
-//   } finally {
-//     client.release();
-//   }
-// }
-
+/**
+ * Inserts videos into the database.
+ * @param {Array<Object>} videos - An array of video objects to be inserted.
+ * @returns {Promise<void>} - A promise that resolves when the videos are inserted successfully.
+ */
 const insertVideoIntoDB = async (videos) => {
   const client = await poolRender.connect();
 
@@ -332,6 +320,15 @@ io.on("connection", (socket) => {
   });
 });
 
+/**
+ * Represents a recipe video.
+ *
+ * @typedef {Object} recipe_video
+ * @property {string} kind - The type of the video.
+ * @property {string} etag - The entity tag of the video.
+ * @property {string} id - The unique identifier of the video.
+ * @property {Object} snippet - The snippet data of the video.
+ */
 const recipe_video = sequelize.define(
   'recipe_video',
   {
@@ -359,10 +356,27 @@ const recipe_video = sequelize.define(
   }
 );
 
-httpServer.listen(3000, ()=> {
+httpServer.listen(3000, () => {
   console.log(chalk.bgWhiteBright('listening on *:3000'));
 
   sequelize.query('CREATE SCHEMA IF NOT EXISTS video;');
+
+  client.on('connect', async () => {
+    console.log(chalk.bgGreen('Client connected to Redis...'));
+  
+    try {
+      const response = await client.ping();
+      console.log(chalk.bgGreen(`Response: ${response}`)); // Should log 'PONG' if successful
+    } catch (error) {
+      console.error('Error in PING:', error);
+    }
+  });
+  
+  client.on('error', (err) => {
+    console.error('Error:', err);
+  });
+  
+  client.connect();
 
   return new Promise((resolve, reject) => {
     try {
