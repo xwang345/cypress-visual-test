@@ -27,22 +27,40 @@ export class RecipeVideoComponent implements OnInit, OnDestroy {
 	displayedVideo: any[] = []
 	defaultPageSize: number = 9
 	channelId: string
+	pageIndex = 0 // Default page index
+	isLoading = false
+	showFirstLastButtons = true
 
 	constructor(
-		private recipeVideoService: RecipeVideoService,
-		private dataStorageService: DataStorageService,
 		private socketIoService: SocketIoService,
 		private router: Router,
 	) {}
 
 	ngOnInit() {
+		// Read the defaultPageSize and pageIndex from localStorage
+		const storedPageSize = localStorage.getItem('defaultPageSize')
+		const storedPageIndex = localStorage.getItem('pageIndex')
+
+		// Check if the storedPageSize exists and is a valid number
+		if (storedPageSize && !isNaN(Number(storedPageSize))) {
+			this.defaultPageSize = Number(storedPageSize)
+		}
+
+		// Check if the storedPageIndex exists and is a valid number
+		if (storedPageIndex && !isNaN(Number(storedPageIndex))) {
+			this.pageIndex = Number(storedPageIndex)
+		}
+
+		this.isLoading = true
+
 		this.socketIoService.emitToServer('fetchAllVideosDB', 'video.video')
 
 		this.subscription = this.socketIoService
 			.listenToServer('youtubeVideosFetched')
 			.subscribe((data) => {
 				this.recipeVideos = data
-				this.updateDisplayedVideo()
+				this.isLoading = false
+				this.updateDisplayedVideo(this.pageIndex, this.defaultPageSize)
 			})
 	}
 
@@ -73,6 +91,10 @@ export class RecipeVideoComponent implements OnInit, OnDestroy {
 	 */
 	pageChanged(event: PageEvent) {
 		this.updateDisplayedVideo(event.pageIndex, event.pageSize)
+		this.defaultPageSize = event.pageSize
+		this.pageIndex = event.pageIndex
+		localStorage.setItem('defaultPageSize', this.defaultPageSize.toString())
+		localStorage.setItem('pageIndex', this.pageIndex.toString())
 	}
 
 	/**
@@ -91,6 +113,10 @@ export class RecipeVideoComponent implements OnInit, OnDestroy {
 		}
 
 		this.displayedVideo = this.recipeVideos.slice(startIndex, endIndex)
+	}
+
+	scrollToTop() {
+		window.scrollTo({ top: 0, behavior: 'smooth' })
 	}
 
 	ngOnDestroy() {

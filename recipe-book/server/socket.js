@@ -12,6 +12,10 @@ import ytdl from 'ytdl-core';
 import path from 'path';
 import os from 'os';
 import { createClient } from 'redis';
+import {
+  storeVideosInRedis,
+  fetchAllVideosFromRedis,
+} from './redis.service.js';
 
 const app = express();
 app.use(cors());
@@ -51,9 +55,9 @@ const poolRender = new Pool({
 const client = createClient({
   password: 'vHgVjnQ10t5C9fm5vZlo6ZsxfyVULoiQ',
   socket: {
-      host: 'redis-16924.c322.us-east-1-2.ec2.cloud.redislabs.com',
-      port: 16924
-  }
+    host: 'redis-16924.c322.us-east-1-2.ec2.cloud.redislabs.com',
+    port: 16924,
+  },
 });
 
 sequelize
@@ -68,13 +72,14 @@ sequelize
 // Initialize the YouTube API client
 const youtube = google.youtube({
   version: 'v3',
-  auth: 'AIzaSyBwrUutVOfYQKaLU6AX2tKO6JilQJp1GKo' // Replace 'YOUR_API_KEY' with your actual API key
+  auth: 'AIzaSyBwrUutVOfYQKaLU6AX2tKO6JilQJp1GKo', // Replace 'YOUR_API_KEY' with your actual API key
 });
 
 async function fetchAllVideosFromDB(tableName) {
   const client = await poolRender.connect();
   try {
     const result = await client.query(`SELECT * FROM ${tableName};`);
+    console.log(chalk.bgGreenBright(`Found ${result.rows.length} videos.`));
     return result.rows; // 'rows' contains the query results
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -87,10 +92,13 @@ async function fetchAllVideosFromDB(tableName) {
 async function getUploadsPlaylistId(channelId) {
   const response = await youtube.channels.list({
     part: 'contentDetails',
-    id: channelId // or use 'forUsername' if you have the channel's username
+    id: channelId, // or use 'forUsername' if you have the channel's username
   });
 
-  const uploadsId = response.data.items[0].contentDetails.relatedPlaylists.uploads;
+  console.log(chalk.green(`=========> ${JSON.stringify(response, null, 2)}`))
+
+  const uploadsId =
+    response.data.items[0].contentDetails.relatedPlaylists.uploads;
   return uploadsId;
 }
 
@@ -103,7 +111,7 @@ async function fetchAllVideos(playlistId) {
       part: 'snippet',
       playlistId: playlistId,
       maxResults: 50, // Adjust as needed
-      pageToken: pageToken
+      pageToken: pageToken,
     });
 
     videos = videos.concat(response.data.items);
@@ -120,18 +128,20 @@ async function fetchAllVideos(playlistId) {
  */
 async function downloadYouTubeVideo(url, outputPath) {
   if (!ytdl.validateURL(url)) {
-      throw new Error('Invalid YouTube URL');
+    throw new Error('Invalid YouTube URL');
   }
 
   try {
-      const video = ytdl(url, { quality: 'highestaudio' });
-      video.pipe(fs.createWriteStream(outputPath));
-      return new Promise((resolve, reject) => {
-          video.on('end', () => resolve('Download completed.'));
-          video.on('error', error => reject(`Error during download: ${error.message}`));
-      });
+    const video = ytdl(url, { quality: 'highestaudio' });
+    video.pipe(fs.createWriteStream(outputPath));
+    return new Promise((resolve, reject) => {
+      video.on('end', () => resolve('Download completed.'));
+      video.on('error', (error) =>
+        reject(`Error during download: ${error.message}`)
+      );
+    });
   } catch (error) {
-      throw new Error(`Failed to download video: ${error.message}`);
+    throw new Error(`Failed to download video: ${error.message}`);
   }
 }
 
@@ -143,7 +153,7 @@ async function downloadYouTubeVideo(url, outputPath) {
 async function getYoutubeVideoById(videoId) {
   const response = await youtube.videos.list({
     part: 'snippet,statistics',
-    id: videoId
+    id: videoId,
   });
 
   return response.data.items[0];
@@ -155,20 +165,20 @@ async function getYoutubeVideoById(videoId) {
  */
 async function fetchAllComments(videoId, maxResults) {
   try {
-      const response = await youtube.commentThreads.list({
-          part: 'snippet',
-          videoId: videoId,
-          maxResults: maxResults // Adjust as needed
-      });
+    const response = await youtube.commentThreads.list({
+      part: 'snippet',
+      videoId: videoId,
+      maxResults: maxResults, // Adjust as needed
+    });
+    
+    const comments = response.data.items.map((item) => ({
+      author: item.snippet.topLevelComment.snippet.authorDisplayName,
+      comment: item.snippet.topLevelComment.snippet.textDisplay,
+    }));
 
-      const comments = response.data.items.map(item => ({
-          author: item.snippet.topLevelComment.snippet.authorDisplayName,
-          comment: item.snippet.topLevelComment.snippet.textDisplay
-      }));
-
-      return comments;
+    return comments;
   } catch (error) {
-      throw new Error(`Error fetching comments: ${error.message}`);
+    throw new Error(`Error fetching comments: ${error.message}`);
   }
 }
 
@@ -177,12 +187,12 @@ async function fetchAllComments(videoId, maxResults) {
  */
 function getDownloadsFolderPath() {
   switch (os.platform()) {
-      case 'win32': // Windows
-          return path.join(os.homedir(), 'Downloads');
-      case 'darwin': // macOS
-          return path.join(os.homedir(), 'Downloads');
-      default: // Linux and others
-          return path.join(os.homedir(), 'Downloads');
+    case 'win32': // Windows
+      return path.join(os.homedir(), 'Downloads');
+    case 'darwin': // macOS
+      return path.join(os.homedir(), 'Downloads');
+    default: // Linux and others
+      return path.join(os.homedir(), 'Downloads');
   }
 }
 
@@ -204,7 +214,6 @@ const insertVideoIntoDB = async (videos) => {
     const snippets = [];
 
     for (const video of videos) {
-      console.log(chalk.green(`Inserting ${video.snippet.resourceId.videoId} into the database...`));
       kinds.push(video.kind);
       etags.push(video.etag);
       ids.push(video.id);
@@ -229,19 +238,23 @@ const insertVideoIntoDB = async (videos) => {
   }
 };
 
-io.on("connection", (socket) => {
+io.on('connection', (socket) => {
   console.log('A user connected');
 
   // Listen for fetchYouTubeVideos event
   socket.on('fetchYouTubeVideos', async (channelId) => {
-    console.log(chalk.bgBlueBright(`Fetching videos for channel ID: ${channelId}`));
+    console.log(
+      chalk.bgBlueBright(`Fetching videos for channel ID: ${channelId}`)
+    );
 
     try {
       const playlistId = await getUploadsPlaylistId(channelId);
       const videos = await fetchAllVideos(playlistId);
 
       try {
+        await storeVideosInRedis(videos);
         await insertVideoIntoDB(videos);
+
         console.log(chalk.bgGreenBright(`Found ${videos.length} videos.`));
         const allVideos = await fetchAllVideosFromDB('video.video');
         socket.emit('youtubeVideosFetched', allVideos); // Emit after DB insertion
@@ -249,7 +262,6 @@ io.on("connection", (socket) => {
         console.error(chalk.bgRed(`Database error: ${dbError.message}`));
         socket.emit('youtubeVideosFetchError', dbError.message);
       }
-
     } catch (error) {
       console.error(chalk.bgRed(`Error: ${error.message}`));
       socket.emit('youtubeVideosFetchError', error.message);
@@ -261,9 +273,22 @@ io.on("connection", (socket) => {
     console.log(chalk.bgBlueBright(`Fetching videos for table: ${tableName}`));
 
     try {
-      const videos = await fetchAllVideosFromDB('video.video');
+      let videos = await fetchAllVideosFromRedis();
       console.log(chalk.bgGreenBright(`Found ${videos.length} videos.`));
-      socket.emit('youtubeVideosFetched', videos); // Emit after DB insertion
+
+      if (!videos.length) {
+        console.log(
+          chalk.bgYellow(`No videos found in Redis. Fetching from DB...`)
+        );
+        videos = await fetchAllVideosFromDB(tableName);
+        socket.emit('youtubeVideosFetched', videos); // Emit after DB insertion
+        await storeVideosInRedis(videos);
+      } else {
+        console.log(
+          chalk.bgGreenBright(`Fetched ${videos.length} videos from Redis`)
+        );
+        socket.emit('youtubeVideosFetched', videos); // Emit after DB insertion
+      }
     } catch (dbError) {
       console.error(chalk.bgRed(`Database error: ${dbError.message}`));
       socket.emit('youtubeVideosFetchError', dbError.message);
@@ -295,6 +320,7 @@ io.on("connection", (socket) => {
 
     try {
       const video = await getYoutubeVideoById(videoId);
+
       socket.emit('videoDetailsFetched', video);
     } catch (error) {
       console.error(chalk.bgRed(`Error: ${error.message}`));
@@ -360,23 +386,6 @@ httpServer.listen(3000, () => {
   console.log(chalk.bgWhiteBright('listening on *:3000'));
 
   sequelize.query('CREATE SCHEMA IF NOT EXISTS video;');
-
-  client.on('connect', async () => {
-    console.log(chalk.bgGreen('Client connected to Redis...'));
-  
-    try {
-      const response = await client.ping();
-      console.log(chalk.bgGreen(`Response: ${response}`)); // Should log 'PONG' if successful
-    } catch (error) {
-      console.error('Error in PING:', error);
-    }
-  });
-  
-  client.on('error', (err) => {
-    console.error('Error:', err);
-  });
-  
-  client.connect();
 
   return new Promise((resolve, reject) => {
     try {

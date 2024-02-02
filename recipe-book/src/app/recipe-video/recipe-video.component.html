@@ -1,10 +1,11 @@
+<ng-template appPlaceholder></ng-template>
 <div class="row">
-  <div class="col-md-5">
+  <div class="col-md-12">
     <h1 style="color: aliceblue;">Coming Soon! Under Development...</h1>
     <br />
     <br />
-    <div style="display: flex; align-items: center;">
-      <mat-form-field appearance="fill" style="flex-grow: 1; width:auto;">
+    <div class="search-bar">
+      <mat-form-field appearance="fill">
         <mat-label>add channel's video</mat-label>
         <input matInput type="text" [(ngModel)]="channelId" placeholder="fetch channel's video by channel id">
       </mat-form-field>
@@ -17,18 +18,26 @@
     </div>
     <mat-paginator [length]="recipeVideos.length"
               [pageSize]="defaultPageSize"
-              [pageSizeOptions]="[6, 9, 18, 36, 72, recipeVideos.length]"
+              [pageIndex]="pageIndex"
+              [showFirstLastButtons]="showFirstLastButtons"
+              [pageSizeOptions]="[6, 9, 18, 36, 72, 144, 288]"
               (page)="pageChanged($event)"
-              aria-label="Select page">
+              aria-label="Select page"
+              class="custom-paginator">
     </mat-paginator>
     <br />
     <br />
+    <div *ngIf="isLoading" style="text-align: center;">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
     <div class="grid-container" [@slideIn]>
-      <div *ngFor="let video of displayedVideo" class="grid-item" class="zoom-effect">
-        <mat-card style="color: aliceblue; border-radius: 30px;">
-          <mat-card-content >
+      <div *ngFor="let video of displayedVideo"
+      class="grid-item zoom-effect">
+        <mat-card style="color: aliceblue; border-radius: 10px;">
+          <mat-card-content>
             <img [src]="video.snippet.thumbnails.medium.url" alt="{{ video.title }}" 
-            (click)="navigateToVideoPage(video.snippet.resourceId.videoId)" style=" cursor: pointer;">
+            (click)="navigateToVideoPage(video.snippet.resourceId.videoId)" 
+            style=" cursor: pointer; border-radius: 10px;">
             <a (click)="navigateToVideoPage(video.snippet.resourceId.videoId)" style="cursor: pointer; text-decoration: none; color: azure;">
               <h3><b>{{ video.snippet.title }}</b></h3>
             </a>
@@ -39,6 +48,9 @@
       </div>
     </div>
   </div>
+  <button mat-mini-fab (click)="scrollToTop()" class="scrollToTop">
+    <mat-icon>arrow_upward</mat-icon>
+  </button>
   <div class="col-md-7">
     <router-outlet></router-outlet>
   </div>
