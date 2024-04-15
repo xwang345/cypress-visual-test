@@ -6,7 +6,7 @@ const { removeDirectory } = require('cypress-delete-downloads-folder');
 
 
 export default defineConfig({
-  projectId: "37z5fo",
+  projectId: 'dr5boy',
   e2e: {
     video: true,
     setupNodeEvents(on, config) {

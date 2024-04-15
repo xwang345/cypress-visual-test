@@ -11,7 +11,8 @@
         "cypress-real-events"
       ],
       "allowJs":false,
-      "noImplicitAny": false
+      "noImplicitAny": false,
+      "baseUrl": "./cypress"
     },
     "include": ["**/*.ts", "@simonsmith/cypress-image-snapshot/types", "cypress", "@percy/cypress"]
   }
