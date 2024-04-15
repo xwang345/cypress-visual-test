@@ -6,6 +6,8 @@ import { throwError, BehaviorSubject } from 'rxjs'
 import { User } from './user.model'
 import { environment } from '../../environments/environment'
 
+import { Auth, signInWithPopup, GoogleAuthProvider } from '@angular/fire/auth'
+
 export interface AuthResponseData {
 	idToken: string
 	email: string
@@ -25,6 +27,7 @@ export class AuthService {
 	constructor(
 		private http: HttpClient,
 		private router: Router,
+		private auth: Auth,
 	) {}
 
 	signup(email: string, password: string) {
@@ -117,6 +120,23 @@ export class AuthService {
 			this.logout()
 		}, expirationDuration)
 	}
+
+	// async googleSignIn() {
+	// 	try {
+	// 		const provider = new GoogleAuthProvider()
+	// 		const result = await signInWithPopup(this.auth, provider)
+	// 		console.log(result.user)
+	// 		// Handle the authenticated user here.
+	// 	} catch (error) {
+	// 		console.error(error)
+	// 		// Handle errors here.
+	// 	}
+	// }
+
+	// async signOut() {
+	// 	await this.auth.signOut()
+	// 	// Handle sign-out here.
+	// }
 
 	private handleAuthentication(
 		email: string,
