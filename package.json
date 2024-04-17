@@ -60,7 +60,7 @@
   "homepage": "https://github.com/xwang345/cypress-visual-test#readme",
   "dependencies": {
     "@types/cypress-image-snapshot": "^3.1.9",
-    "cypress": "^12.0.2",
+    "cypress": "^13.7.3",
     "cypress-img-snapshot": "^1.0.0",
     "cypress-plugin-steps": "^1.1.1",
     "cypress-real-events": "^1.11.0",
