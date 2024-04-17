@@ -53,10 +53,10 @@ const poolRender = new Pool({
 });
 
 const client = createClient({
-  password: 'vHgVjnQ10t5C9fm5vZlo6ZsxfyVULoiQ',
+  password: 'mZi7WvUInTlZty1TB85nvfca9Olg190i',
   socket: {
-    host: 'redis-16924.c322.us-east-1-2.ec2.cloud.redislabs.com',
-    port: 16924,
+    host: 'redis-16878.c16.us-east-1-2.ec2.cloud.redislabs.com',
+    port: 16878,
   },
 });
 
