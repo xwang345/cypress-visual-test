@@ -45,10 +45,7 @@ jobs:
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          repoToken: ${{ secrets.TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}  # Ensure this matches the name of your secret
-<<<<<<< HEAD
           projectId: ng-xwang345-recipe-book
-=======
-          projectId: ng-xwang345-recipe-book
->>>>>>> ce7e80ab132391c23dfd00123d2cc64120d5a11e
+
