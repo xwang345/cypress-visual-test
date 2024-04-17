@@ -14,22 +14,22 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
-import {addMatchImageSnapshotCommand} from '@simonsmith/cypress-image-snapshot/command'
-import '@percy/cypress'
-const fs = require('fs')
-const path = require('path')
-import '@shelex/cypress-allure-plugin';
-require('cypress-plugin-steps')
+import "./commands";
+import { addMatchImageSnapshotCommand } from "@simonsmith/cypress-image-snapshot/command";
+import "@percy/cypress";
+const fs = require("fs");
+const path = require("path");
+import "@shelex/cypress-allure-plugin";
+require("cypress-plugin-steps");
 import "cypress-real-events";
 
-addMatchImageSnapshotCommand()
+addMatchImageSnapshotCommand();
 
 // can also add any default options to be used
 // by all instances of `matchImageSnapshot`
 addMatchImageSnapshotCommand({
-  failureThreshold: 0.2,
-  failureThresholdType: 'percent',
-  customDiffConfig: {threshold: 0.0},
-  capture: 'viewport'
-})
+	failureThreshold: 0.2,
+	failureThresholdType: "percent",
+	customDiffConfig: { threshold: 0.0 },
+	capture: "viewport",
+});
