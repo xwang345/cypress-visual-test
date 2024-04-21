@@ -12,6 +12,7 @@ module.exports = {
     }
   },
   transformIgnorePatterns: [
-    'node_modules/(?!@angular|@ngx-translate)'
+    'node_modules/(?!@angular|@ngx-translate)',
+    '/node_modules/(?!(foo|bar)/)', '/bar/'
   ]
 };
