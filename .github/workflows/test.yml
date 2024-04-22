@@ -27,8 +27,11 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Run Jest tests
-        run: npm run test:coverage
+        run: npm run test
         continue-on-error: true
 
       - name: Allure Report action from marketplace
