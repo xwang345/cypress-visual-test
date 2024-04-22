@@ -23,6 +23,7 @@ jobs:
 
       - name: Navigate to the recipe-book directory
         run: cd recipe-book
+             pwd
 
       - name: Install dependencies
         run: npm install
