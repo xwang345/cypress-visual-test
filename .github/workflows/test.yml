@@ -28,7 +28,7 @@ jobs:
           path: gh-pages
 
       - name: Run Jest tests
-        run: npm run test:coverage
+        run: npm test:coverage
         continue-on-error: true
 
       - name: Allure Report action from marketplace
