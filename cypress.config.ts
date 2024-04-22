@@ -5,7 +5,7 @@ import { readPdfFunc } from "./cypress/scripts/readPdf";
 const { removeDirectory } = require("cypress-delete-downloads-folder");
 
 export default defineConfig({
-	projectId: "unvwyq", // your project id from cypress dashboard
+	projectId: "p1ohud", // your project id from cypress dashboard
 	e2e: {
 		video: true, // enable video recording
 		setupNodeEvents(on, config) {
