@@ -23,6 +23,5 @@ jobs:
 
       - name: Install dependencies and run tests
         run: |
-          cd ../
           cd recipe-book
           npm run test:coverage
