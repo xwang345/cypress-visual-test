@@ -18,7 +18,7 @@ jobs:
           node-version: '21'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run Cypress tests
         run: npx cypress run --browser chrome --headless --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
