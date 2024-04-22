@@ -40,7 +40,8 @@
     "precy-run": "yarn run allure:clear_results && yarn run allure:clear_report",
     "ui-regression": "cypress run --browser chrome --headless --spec cypress/e2e/**.cy.ts --env allure=true --reporter mocha-allure-reporter",
     "cy-run": "cypress run --env allure=true",
-    "postcy-run": "yarn run allure:report"
+    "postcy-run": "yarn run allure:report",
+    "test:coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
