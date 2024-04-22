@@ -1,4 +1,4 @@
-name: Cypress and Jest tests
+name: Cypress test
 
 on:
   schedule:
@@ -29,10 +29,6 @@ jobs:
         with:
           ref: gh-pages
           path: gh-pages
-
-      - name: Run Jest tests
-        run: npm run test:coverage
-        continue-on-error: true
 
       - name: Allure Report action from marketplace
         uses: simple-elf/allure-report-action@master
