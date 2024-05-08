@@ -1,0 +1,11 @@
+version: '3'
+services:
+  cypress:
+    image: cypress_e2e_v1:latest
+    command: sh -c "npm run cy:test && npx ts-node mochawesome-reporter-server.ts"
+    # Map the ports to the host machine
+    ports:
+      - "3000:3000"
+    # Mount the volume to persist the data
+    volumes:
+      - './cypress-ci-cd/volumes/master:/app/cypress/results'

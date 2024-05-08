@@ -15,10 +15,5 @@ RUN apt-get update && apt-get install -y \
 COPY . /app
 COPY ./cypress ./cypress
 COPY cypress.config.ts .
-RUN npm i -g yarn@latest npm@latest
 RUN npm install
-RUN npm install --save-dev @simonsmith/cypress-image-snapshot
-RUN ["npm", "run", "cy:run"]
-ENV PORT=8080
-EXPOSE 8080
-CMD [ "" ]
+CMD npm run cy:test && npx ts-node mochawesome-reporter-server.ts

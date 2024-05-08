@@ -1,4 +1,9 @@
 node_modules
-snapshots
-screenshots
-videos
+cypress/downloads
+cypress/screenshots
+cypress/videos
+cypress/snapshots
+cypress/results
+allure-results
+allure-report
+cypress-ci-cd

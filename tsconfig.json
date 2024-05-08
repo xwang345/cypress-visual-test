@@ -14,5 +14,11 @@
       "noImplicitAny": false,
       "baseUrl": "./cypress"
     },
-    "include": ["**/*.ts", "@simonsmith/cypress-image-snapshot/types", "cypress", "@percy/cypress"]
+    "include": [
+      "**/*.ts", 
+      "@simonsmith/cypress-image-snapshot/types", 
+      "cypress", 
+      "@percy/cypress",
+      "node"
+    ]
   }

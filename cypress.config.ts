@@ -3,10 +3,12 @@ import { addMatchImageSnapshotPlugin } from "@simonsmith/cypress-image-snapshot/
 const allureWriter = require("@shelex/cypress-allure-plugin/writer");
 import { readPdfFunc } from "./cypress/scripts/readPdf";
 const { removeDirectory } = require("cypress-delete-downloads-folder");
+const cypressSplit = require("cypress-split");
 
 export default defineConfig({
 	projectId: "p1ohud", // your project id from cypress dashboard
 	e2e: {
+		reporter: "mochawesome",
 		video: true, // enable video recording
 		setupNodeEvents(on, config) {
 			// implement node event listeners here
@@ -18,7 +20,16 @@ export default defineConfig({
 				}),
 				addMatchImageSnapshotPlugin(on);
 			allureWriter(on, config); // enable allure report generation
+			cypressSplit(on, config);
 			return config;
+		},
+		reporterOptions: {
+			reportDir: "cypress/results",
+			reportTitle: "Cypress E2E Test Report",
+			reportFilename: "[name].html",
+			overwrite: true,
+			html: true,
+			json: true,
 		},
 		downloadsFolder: "cypress/downloads",
 		trashAssetsBeforeRuns: true, // remove assets before each run
