@@ -7,28 +7,31 @@ const cypressSplit = require("cypress-split");
 
 export default defineConfig({
 	projectId: "p1ohud", // your project id from cypress dashboard
+	video: true, // enable video recording
+	videosFolder: "cypress/videos", // videos folder
+	screenshotsFolder: "cypress/screenshots", // screenshots folder
 	e2e: {
 		reporter: "mochawesome",
-		video: true, // enable video recording
 		setupNodeEvents(on, config) {
 			// implement node event listeners here
 			on("task", {
 				readPdfFunc,
 			}),
-				on("task", {
-					removeDirectory,
-				}),
-				addMatchImageSnapshotPlugin(on);
+			on("task", {
+				removeDirectory,
+			}),
+			addMatchImageSnapshotPlugin(on); // enable image snapshot
 			allureWriter(on, config); // enable allure report generation
 			cypressSplit(on, config);
 			return config;
 		},
 		reporterOptions: {
-			reportDir: "cypress/results",
-			reportTitle: "Cypress E2E Test Report",
+			reportDir: "cypress/reports/mochawesome-report",
+			reportTitle: "Cypress Mochawesome E2E Test Report",
 			reportFilename: "[name].html",
 			overwrite: true,
 			html: true,
+			chart: true,
 			json: true,
 		},
 		downloadsFolder: "cypress/downloads",
