@@ -14,8 +14,6 @@ services:
     image: recipe_book_front_end:latest
     depends_on:
       - recipe_book_back_end
-    # links:
-    #   - recipe_book_back_end
     ports:
       - "4200:4200"
     networks:
@@ -33,7 +31,6 @@ services:
       - "5050:5050"
     volumes:
       - './cypress-ci-cd/volumes/master:/app/cypress/results'
-      - './start_cypress_e2e.sh:/start_cypress_e2e.sh'
 
 networks:
   recipe-book-internalnet:
