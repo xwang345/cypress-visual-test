@@ -5,10 +5,10 @@ let client;
 
 (async () => {
   client = redis.createClient({
-    password: 'mZi7WvUInTlZty1TB85nvfca9Olg190i',
+    password: 'rznT9GeJgHIHeJ3q4xkJDUCzvauzYywQ',
     socket: {
-        host: 'redis-16878.c16.us-east-1-2.ec2.cloud.redislabs.com',
-        port: 16878
+        host: 'redis-13945.c74.us-east-1-4.ec2.redns.redis-cloud.com',
+        port: 13945
     }
   });
 

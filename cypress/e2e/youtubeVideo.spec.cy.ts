@@ -3,6 +3,19 @@ describe("shopping list page verification", () => {
 		cy.viewport("macbook-16");
 	});
 
+	it("should be able to add youtube channel video", () => {
+		cy.viewport("macbook-16");
+		cy.visit("localhost:4200/recipe-video");
+		cy.wait(3000);
+		cy.get(".search-bar")
+			.find(".mat-mdc-input-element")
+			.click({ force: true })
+			.type("UCbEuBDD3xQAxK0zpIP_se-g");
+		cy.get('[aria-label="Example icon button with a plus one icon"]')
+			.find(".mat-mdc-button-touch-target")
+			.click({ force: true });
+	});
+
 	it("should able to add recipes to the shopping list", () => {
 		cy.visit("localhost:4200/shopping-list");
 		cy.wait(300);

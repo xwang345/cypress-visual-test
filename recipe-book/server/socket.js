@@ -25,11 +25,11 @@ const io = new Server(httpServer, { cors: { origin: '*' } });
 
 //render.com connection configuration
 const sequelize = new Sequelize(
-  'recipedb_q8ko',
+  'recipedb_jyy7',
   'xwang345',
-  'sXjsgyEmDEGga4IVc4G7SFgnBZmwp3I8',
+  'Jby29Lswgx5IQ6Ma0madF37qTdCT0jtf',
   {
-    host: 'dpg-cmp4bgmn7f5s73dblc20-a.oregon-postgres.render.com',
+    host: 'dpg-couig2md3nmc73aegkrg-a.oregon-postgres.render.com',
     dialect: 'postgres',
     port: 5432,
     dialectOptions: {
@@ -43,9 +43,9 @@ const sequelize = new Sequelize(
 
 const poolRender = new Pool({
   user: 'xwang345',
-  host: 'dpg-cmp4bgmn7f5s73dblc20-a.oregon-postgres.render.com',
-  database: 'recipedb_q8ko',
-  password: 'sXjsgyEmDEGga4IVc4G7SFgnBZmwp3I8',
+  host: 'dpg-couig2md3nmc73aegkrg-a.oregon-postgres.render.com',
+  database: 'recipedb_jyy7',
+  password: 'Jby29Lswgx5IQ6Ma0madF37qTdCT0jtf',
   port: 5432,
   ssl: {
     rejectUnauthorized: false,
@@ -53,9 +53,9 @@ const poolRender = new Pool({
 });
 
 const client = createClient({
-  password: 'mZi7WvUInTlZty1TB85nvfca9Olg190i',
+  password: 'Xt2ppCDCGQD8XH4nXzs0eKHdfhePsUA2',
   socket: {
-    host: 'redis-16878.c16.us-east-1-2.ec2.cloud.redislabs.com',
+    host: 'redis-18400.c245.us-east-1-3.ec2.redns.redis-cloud.com',
     port: 16878,
   },
 });
@@ -133,6 +133,7 @@ async function downloadYouTubeVideo(url, outputPath) {
 
   try {
     const video = ytdl(url, { quality: 'highestaudio' });
+    // video.pipe(fs.createWriteStream(outputPath));
     video.pipe(fs.createWriteStream(outputPath));
     return new Promise((resolve, reject) => {
       video.on('end', () => resolve('Download completed.'));

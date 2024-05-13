@@ -75,11 +75,11 @@ export class AuthService {
 
 	autoLogin() {
 		const userData: {
-			email: string
-			id: string
-			_token: string
-			_tokenExpirationDate: string
-		} = JSON.parse(localStorage.getItem('userData')) // get user data from local storage
+			email: string;
+			id: string;
+			_token: string;
+			_tokenExpirationDate: string;
+		} = JSON.parse(localStorage.getItem('userData')); // get user data from local storage
 
 		if (!userData) {
 			return // if user data does not exist, then return

@@ -6,7 +6,6 @@ import { PageEvent } from '@angular/material/paginator'
 import { Router } from '@angular/router'
 import { trigger, transition, style, animate } from '@angular/animations'
 import { SocketIoService } from '../shared/socket.io.service'
-import { data } from 'cypress/types/jquery'
 
 @Component({
 	selector: 'recipe-video',

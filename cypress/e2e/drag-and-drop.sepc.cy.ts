@@ -19,11 +19,11 @@ describe("Verify drag and drop", () => {
 				.realMouseDown({ button: "left", position: "center" })
 				.realMouseMove(0, 10, { position: "center" });
 
-			cy.wait(500); // In our case, we wait 500ms cause we have animations which we are sure that take this amount of time
+			cy.wait(1000); // In our case, we wait 500ms cause we have animations which we are sure that take this amount of time
 			cy.get("#cdk-drop-list-2")
 				.realMouseMove(0, 0, { position: "center" })
 				.realMouseUp();
-			cy.wait(500); // In our case, we wait 500ms cause we have animations which we are sure that take this amount of time
+			cy.wait(1000); // In our case, we wait 500ms cause we have animations which we are sure that take this amount of time
 
 			cy.get("#cdk-drop-list-2").should("contain", $el.text());
 		});
