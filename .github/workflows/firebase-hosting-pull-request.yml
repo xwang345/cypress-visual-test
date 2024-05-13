@@ -18,15 +18,15 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '20'
 
       - name: Install dependencies
         run: cd recipe-book && npm install
 
       - name: Build
-        run: npm run build
+        run: cd recipe-book && npm run build
 
       - name: Deploy to Firebase Hosting
         run: |
-          npm install -g firebase-tools
+          cd recipe-book && npm install -g firebase-tools
           firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}

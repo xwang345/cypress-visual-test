@@ -1,11 +1,37 @@
 version: '3'
 services:
-  cypress:
-    image: cypress_e2e_v1:latest
-    command: sh -c "npm run cy:test && npx ts-node mochawesome-reporter-server.ts"
-    # Map the ports to the host machine
+  recipe_book_back_end:
+    container_name: recipe_book_back_end
+    build: ./recipe-book/server
+    image: recipe_book_back_end:latest
+    command: node socket.js
     ports:
       - "3000:3000"
-    # Mount the volume to persist the data
+
+  recipe_book_front_end:
+    container_name: recipe_book_front_end
+    build: ./recipe-book
+    image: recipe_book_front_end:latest
+    depends_on:
+      - recipe_book_back_end
+    ports:
+      - "4200:4200"
+    networks:
+      - recipe-book-internalnet
+
+  cypress_e2e:
+    container_name: cypress_e2e
+    build: . 
+    image: cypress_e2e:latest
+    depends_on:
+      - recipe_book_back_end
+      - recipe_book_front_end
+    command: ./start_cypress_e2e.sh
+    ports:
+      - "5050:5050"
     volumes:
       - './cypress-ci-cd/volumes/master:/app/cypress/results'
+
+networks:
+  recipe-book-internalnet:
+    driver: bridge

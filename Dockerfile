@@ -13,7 +13,6 @@ RUN apt-get update && apt-get install -y \
   xauth \
   xvfb
 COPY . /app
-COPY ./cypress ./cypress
-COPY cypress.config.ts .
+# Give execute permissions to the script
+RUN chmod +x start_cypress_e2e.sh
 RUN npm install
-CMD npm run cy:test && npx ts-node mochawesome-reporter-server.ts
